@@ -1,0 +1,111 @@
+.intro-section {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.intro-section h1 {
+    font-weight: lighter;
+    font-size: 6rem;
+    margin: 10rem 0rem;
+    display: flex;
+    justify-content: center;
+}
+
+.intro-section .sentence-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.intro-section .sentence {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    line-height: normal;
+    margin-bottom: 1rem;
+}
+
+.intro-section .description {
+    font-size: 3rem;
+    margin: 0 0 1.5rem 0;
+    margin-bottom: 3rem;
+    line-height: 4rem;
+    justify-content: center;
+}
+
+.intro-section .profession {
+    font-size: 4rem;
+    font-family: "main-bold";
+    letter-spacing: 0.1rem;
+    color: hsl(240, 20%, 50%);
+    text-shadow: 0.05rem 0.05rem 0.1rem #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .intro-section .profession {
+        color: hsl(240, 20%, 60%);
+        text-shadow: 0.05rem 0.05rem 0.1rem #000;
+    }
+}
+
+@media (max-width: 1536px) {
+    .intro-section .sentence {
+        font-size: 4rem;
+    }
+    .intro-section .profession {
+        font-size: 3rem;
+    }
+    .intro-section .description {
+        font-size: 2rem;
+        line-height: 3rem;
+    }
+}
+
+@media (max-width: 1280px) {
+}
+
+@media (max-width: 1024px) {
+    .intro-section .sentence {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    .intro-section .profession {
+        font-size: 2.5rem;
+    }
+    .intro-section .description {
+        font-size: 2rem;
+        line-height: 3rem;
+        margin-bottom: 3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .intro-section .description {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        line-height: 2rem;
+    }
+}
+
+@media (max-width: 640px), (max-height: 640px) {
+    .intro-section .wrapper {
+        padding-bottom: 4rem;
+    }
+    .intro-section .sentence {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+    .intro-section .profession {
+        font-size: 1.75rem;
+    }
+    .intro-section .description {
+        justify-content: flex-start;
+        font-size: 1.125rem;
+        line-height: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
