@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import GradientLights from "./components/GradientLights";
+import Intro from "./sections/intro/Intro";
+import Skills from "./sections/skills/Skills";
+import Journey from "./sections/journey/Journey";
+import Contact from "./sections/contact/Contact";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    return (
+        <main className="App">
+            <GradientLights />
+            <Intro />
+            <Skills />
+            <Journey />
+            <Contact />
+        </main>
+    );
+};
 
 export default App;

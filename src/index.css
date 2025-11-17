@@ -1,13 +1,159 @@
+:root {
+    color-scheme: light dark;
+    /* Light mode colors */
+    --background-light-mode: #eeeef4;
+    --text-light-mode: #1a1a1a;
+    --primary-light-mode: rgba(0, 96, 255, 1);
+    --secondary-light-mode: #6c757d;
+
+    /* Dark mode colors */
+    --background-dark-mode: #1a1a1a;
+    --text-dark-mode: #eeeef4;
+    --primary-dark-mode: hsl(217, 100%, 80%);
+    --secondary-dark-mode: #a1a8ae;
+}
+
+@font-face {
+    font-family: "main-normal";
+    src: url("./assets/fonts/Aeonik-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "main-bold";
+    src: url("./assets/fonts/Aeonik-Bold.ttf") format("truetype");
+    font-weight: bold;
+    font-style: normal;
+}
+
+/* Disable text selection on all major browsers */
+.disable-select {
+    -webkit-user-select: none; /* Chrome, Safari, newer Opera */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge Legacy */
+    user-select: none; /* Standard */
+    -webkit-touch-callout: none; /* iOS Safari: disable callout on long-press */
+}
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    font-family: "main-normal", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+        "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--background-light-mode);
+    color: var(--text-light-mode);
+}
+
+body a {
+    color: var(--background-dark-mode);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+    }
+    body {
+        background-color: var(--background-dark-mode);
+        color: var(--text-dark-mode);
+    }
+    body a {
+        color: var(--text-dark-mode);
+    }
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+        monospace;
+}
+
+.wrapper {
+    max-width: 100rem;
+    margin: 6rem auto;
+    padding: 0 1rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.section-header p {
+    font-size: 1.5rem;
+}
+
+/* Small (sm) ≥ 640px */
+@media (min-width: 640px) {
+}
+
+/* Medium (md) ≥ 768px */
+@media (min-width: 768px) {
+    .wrapper {
+        padding: 0 2.5rem;
+    }
+}
+
+/* Large (lg) ≥ 1024px */
+@media (min-width: 1024px) {
+    .wrapper {
+        padding: 0 5rem;
+    }
+}
+
+/* Extra Large (xl) ≥ 1280px */
+@media (min-width: 1280px) {
+    .wrapper {
+        padding: 0 10rem;
+    }
+}
+
+/* 2XL (2xl) ≥ 1536px */
+@media (min-width: 1536px) {
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 1536px) {
+}
+
+@media (max-width: 1280px) {
+}
+
+@media (max-width: 1024px) {
+}
+
+@media (max-width: 768px) {
+}
+
+@media (max-width: 640px), (max-height: 640px) {
+    .section-header h2 {
+        font-size: 1.75rem;
+        margin: 0;
+    }
+
+    .section-header p {
+        font-size: 1rem;
+    }
 }

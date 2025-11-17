@@ -1,0 +1,110 @@
+.nav-container {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 14px 30px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 4px 28px rgba(0, 0, 0, 0.25);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    animation: navbarFloat 6s ease-in-out infinite;
+}
+
+.nav-hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(50px);
+    pointer-events: none;
+}
+
+@keyframes navbarFloat {
+    0% {
+        transform: translateX(-50%) translateY(0px);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-8px);
+    }
+    100% {
+        transform: translateX(-50%) translateY(0px);
+    }
+}
+
+.nav-inner {
+    position: relative;
+    display: flex;
+    gap: 2rem;
+}
+
+.fade-in-link {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeSlideIn 0.6s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+.hover-underline {
+    position: absolute;
+    bottom: -3px;
+    height: 3px;
+    width: 0;
+    opacity: 0;
+    border-radius: 20px;
+    pointer-events: none;
+    background: linear-gradient(
+        90deg,
+        #6ddcff,
+        #00eaff,
+        #00ffb0,
+        #00eaff,
+        #6ddcff
+    );
+    background-size: 300% 100%;
+    animation: flowing 10s linear infinite;
+    transition: all 0.28s ease;
+}
+
+@keyframes flowing {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.nav-link {
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.25rem;
+    padding-bottom: 6px;
+    position: relative;
+}
+
+@media (max-width: 640px), (max-height: 640px) {
+    .nav-inner {
+        gap: 1rem;
+    }
+    .nav-link {
+        font-size: 1rem;
+    }
+
+    .nav-container {
+        bottom: 1rem;
+    }
+}
+
+@media (max-height: 640px) {
+    .nav-container {
+        bottom: 0.5rem;
+    }
+}
