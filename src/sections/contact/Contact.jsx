@@ -14,7 +14,7 @@ export default function Contact() {
                     <FiMail />
                 </a>
                 <a
-                    href="https://mrezafathpour.github.io/my-portfolio"
+                    href="https://github.com/mrezafathpour"
                     target="_blank"
                     rel="noreferrer"
                     className="contact-icon"
@@ -32,7 +32,7 @@ export default function Contact() {
                     <FaLinkedin />
                 </a>
                 <a
-                    href="https://mrezafathpour.github.io"
+                    href="https://mrezafathpour.github.io/my-portfolio"
                     target="_blank"
                     rel="noreferrer"
                     className="contact-icon"
