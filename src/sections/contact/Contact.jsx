@@ -14,7 +14,7 @@ export default function Contact() {
                     <FiMail />
                 </a>
                 <a
-                    href="https://github.com/mrezafathpour"
+                    href="https://mrezafathpour.github.io/my-portfolio"
                     target="_blank"
                     rel="noreferrer"
                     className="contact-icon"
