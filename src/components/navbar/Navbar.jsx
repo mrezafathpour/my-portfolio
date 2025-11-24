@@ -69,7 +69,7 @@ export default function Navbar({ handleIntro }) {
         });
     }, []);
 
-    const navLinks = ["Intro", "Skills", "Journey", "Contact"];
+    const navLinks = ["Intro", "Skills", "Projects", "Journey"];
 
     return (
         <nav className={`nav-container ${hidden ? "nav-hidden" : ""}`}>
