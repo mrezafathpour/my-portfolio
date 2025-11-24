@@ -69,7 +69,7 @@ export default function Journey() {
                     <h2>Journey</h2>
                     <p>
                         A timeline of what I’ve been building, learning, and
-                        focusing on.
+                        focusing on
                     </p>
                 </div>
 

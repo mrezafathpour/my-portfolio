@@ -10,9 +10,9 @@ const App = () => {
         <main className="App">
             <GradientLights />
             <Intro />
-            <Skills />
             <Projects />
             <Journey />
+            <Skills />
             <Contact />
         </main>
     );

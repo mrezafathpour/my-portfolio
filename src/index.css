@@ -1,6 +1,5 @@
 :root {
     color-scheme: light dark;
-    --project-img-filter-base: none;
 
     /* Light mode colors */
     --background-light-mode: #eeeef4;
@@ -56,7 +55,6 @@ body a {
 @media (prefers-color-scheme: dark) {
     :root {
         color-scheme: dark;
-        --project-img-filter-base: brightness(0.85) contrast(1.1);
     }
     body {
         background-color: var(--background-dark-mode);
@@ -68,6 +66,10 @@ body a {
 
     .nav-link {
         text-shadow: 0.05rem 0.05rem 0.01rem #000;
+    }
+
+    .project-image-wrapper {
+        filter: brightness(0.75) contrast(1.1);
     }
 }
 
