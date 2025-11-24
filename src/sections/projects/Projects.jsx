@@ -88,6 +88,15 @@ export default function Projects() {
         setIsMobile(getIsMobileDevice());
     }, []);
 
+    useEffect(() => {
+        projects.forEach((p) => {
+            p.images.forEach((src) => {
+                const img = new Image();
+                img.src = src;
+            });
+        });
+    }, []);
+
     return (
         <section className="Projects" id="Projects">
             <div className="wrapper">
@@ -111,7 +120,7 @@ export default function Projects() {
 
 function ProjectCard({ project, isMobile }) {
     const [index, setIndex] = useState(0);
-    const [phase, setPhase] = useState("idle"); // "idle" | "fading-out" | "fading-in"
+    const [phase, setPhase] = useState("idle");
     const [isPaused, setIsPaused] = useState(false);
 
     const nextIndexRef = useRef(null);
@@ -119,25 +128,23 @@ function ProjectCard({ project, isMobile }) {
     const touchEndRef = useRef(null);
     const delayRef = useRef(null);
 
-    // Random delay between 3–6 seconds per project (once)
     useEffect(() => {
         if (delayRef.current == null) {
-            const randomMs = 3000 + Math.random() * 3000; // 3000–6000
+            const randomMs = 3000 + Math.random() * 3000;
             delayRef.current = randomMs;
         }
     }, []);
 
-    // Start animated change: fade-out → change src → fade-in
     const startChangeImage = useCallback(
         (newIndex) => {
             if (project.images.length < 2) return;
-            if (phase !== "idle") return; // avoid overlapping animations
+            if (phase !== "idle") return;
             if (newIndex === index) return;
 
             nextIndexRef.current = newIndex;
             setPhase("fading-out");
         },
-        [project.images.length, phase, index] // dependencies used *inside* the function
+        [project.images.length, phase, index]
     );
 
     const nextImage = () => {
@@ -155,7 +162,6 @@ function ProjectCard({ project, isMobile }) {
         startChangeImage(dotIndex);
     };
 
-    // Auto-change (desktop / tablet only, not mobile)
     useEffect(() => {
         if (isMobile) return;
         if (isPaused) return;
@@ -178,7 +184,6 @@ function ProjectCard({ project, isMobile }) {
         startChangeImage,
     ]);
 
-    // Handle animation phases
     const handleAnimationEnd = () => {
         if (phase === "fading-out") {
             if (nextIndexRef.current != null) {
@@ -190,23 +195,20 @@ function ProjectCard({ project, isMobile }) {
         }
     };
 
-    // Touch swipe support
     const onTouchStart = (e) => {
         touchStartRef.current = e.touches[0].clientX;
     };
-
     const onTouchMove = (e) => {
         touchEndRef.current = e.touches[0].clientX;
     };
-
     const onTouchEnd = () => {
         if (touchStartRef.current == null || touchEndRef.current == null)
             return;
 
         const diff = touchStartRef.current - touchEndRef.current;
 
-        if (diff > 60) nextImage(); // swipe left → next
-        else if (diff < -60) prevImage(); // swipe right → prev
+        if (diff > 60) nextImage();
+        else if (diff < -60) prevImage();
 
         touchStartRef.current = null;
         touchEndRef.current = null;
@@ -220,7 +222,6 @@ function ProjectCard({ project, isMobile }) {
     return (
         <div
             className="project-card"
-            // pause auto-change on hover (desktop / tablet)
             onMouseEnter={() => !isMobile && setIsPaused(true)}
             onMouseLeave={() => !isMobile && setIsPaused(false)}
         >
@@ -231,6 +232,7 @@ function ProjectCard({ project, isMobile }) {
                 onTouchEnd={onTouchEnd}
             >
                 <img
+                    key={project.images[index]}
                     src={project.images[index]}
                     alt={project.title}
                     className={"disable-select " + imgClass}

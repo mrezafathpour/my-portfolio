@@ -14,7 +14,7 @@
 }
 
 .project-image-wrapper {
-    background: var(--background-light-mode);
+    background: #fff;
     position: relative;
     border-radius: 14px;
     overflow: hidden;
@@ -25,7 +25,6 @@
     width: 100%;
     height: auto;
     opacity: 0;
-    filter: var(--project-img-filter-base);
 }
 
 .project-image.shown {
@@ -33,23 +32,23 @@
 }
 
 .project-image.fade-out {
-    animation: imageFadeOut 0.4s ease forwards;
+    animation: imageFadeOut 0.3s ease forwards;
 }
 
 .project-image.fade-in {
-    animation: imageFadeIn 0.4s ease forwards;
+    animation: imageFadeIn 0.3s ease forwards;
 }
 
 @keyframes imageFadeOut {
     0% {
         opacity: 1;
         transform: scale(1);
-        filter: var(--project-img-filter-base);
+        filter: blur(0);
     }
     100% {
         opacity: 0;
         transform: scale(0.97);
-        filter: var(--project-img-filter-base) blur(0.5rem);
+        filter: blur(0.5rem);
     }
 }
 
@@ -57,12 +56,12 @@
     0% {
         opacity: 0;
         transform: scale(1.03);
-        filter: var(--project-img-filter-base) blur(0.5rem);
+        filter: blur(0.5rem);
     }
     100% {
         opacity: 1;
         transform: scale(1);
-        filter: var(--project-img-filter-base);
+        filter: blur(0);
     }
 }
 
@@ -104,7 +103,8 @@
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
     }
-    .project-card .description, .dots {
+    .project-card .description,
+    .dots {
         padding: 0 1rem;
     }
 }
@@ -129,8 +129,5 @@
 @media (prefers-color-scheme: dark) {
     .project-card {
         background: rgba(255, 255, 255, 0.05);
-    }
-    .project-image-wrapper {
-        background: var(--background-dark-mode);
     }
 }
