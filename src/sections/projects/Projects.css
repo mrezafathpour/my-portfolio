@@ -1,0 +1,136 @@
+.projects-grid {
+    display: grid;
+    gap: 30px;
+}
+
+.project-card {
+    display: grid;
+    grid-template-rows: max-content auto 1rem;
+    border-radius: 20px;
+    padding: 1.5rem;
+    backdrop-filter: blur(12px);
+    transition: 0.3s ease;
+    box-shadow: 0 8px 26px hsla(222, 47%, 11%, 0.1);
+}
+
+.project-image-wrapper {
+    background: var(--background-light-mode);
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.project-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    opacity: 0;
+    filter: var(--project-img-filter-base);
+}
+
+.project-image.shown {
+    opacity: 1;
+}
+
+.project-image.fade-out {
+    animation: imageFadeOut 0.4s ease forwards;
+}
+
+.project-image.fade-in {
+    animation: imageFadeIn 0.4s ease forwards;
+}
+
+@keyframes imageFadeOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: var(--project-img-filter-base);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.97);
+        filter: var(--project-img-filter-base) blur(0.5rem);
+    }
+}
+
+@keyframes imageFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(1.03);
+        filter: var(--project-img-filter-base) blur(0.5rem);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        filter: var(--project-img-filter-base);
+    }
+}
+
+.project-title {
+    font-size: 1.5rem;
+    margin: 1.5rem 0 1rem 0;
+}
+
+.project-desc {
+    opacity: 0.75;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    margin: 0 0 1.5rem 0;
+}
+
+.dots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    background: #777;
+    border-radius: 50%;
+    transition: background 0.25s ease, transform 0.25s ease;
+    cursor: pointer;
+}
+
+.dot.active {
+    background: #0060ff;
+}
+
+@media (max-width: 1024px) {
+    .project-card {
+        padding: 0 0 20px 0;
+    }
+    .project-image-wrapper {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .project-card .description, .dots {
+        padding: 0 1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .project-title {
+        font-size: 1.25rem;
+    }
+
+    .project-desc {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .project-card {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    .project-image-wrapper {
+        background: var(--background-dark-mode);
+    }
+}

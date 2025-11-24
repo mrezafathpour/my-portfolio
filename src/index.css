@@ -1,5 +1,7 @@
 :root {
     color-scheme: light dark;
+    --project-img-filter-base: none;
+
     /* Light mode colors */
     --background-light-mode: #eeeef4;
     --text-light-mode: #1a1a1a;
@@ -54,6 +56,7 @@ body a {
 @media (prefers-color-scheme: dark) {
     :root {
         color-scheme: dark;
+        --project-img-filter-base: brightness(0.85) contrast(1.1);
     }
     body {
         background-color: var(--background-dark-mode);
@@ -61,6 +64,10 @@ body a {
     }
     body a {
         color: var(--text-dark-mode);
+    }
+
+    .nav-link {
+        text-shadow: 0.05rem 0.05rem 0.01rem #000;
     }
 }
 
@@ -71,7 +78,7 @@ code {
 
 .wrapper {
     max-width: 100rem;
-    margin: 6rem auto;
+    margin: 5rem auto 10rem auto;
     padding: 0 1rem;
 }
 
@@ -117,23 +124,6 @@ code {
 /* 2XL (2xl) ≥ 1536px */
 @media (min-width: 1536px) {
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 @media (max-width: 1536px) {
 }

@@ -62,11 +62,11 @@
     pointer-events: none;
     background: linear-gradient(
         90deg,
-        #6ddcff,
+        hsl(217, 100%, 50%),
         #00eaff,
-        #00ffb0,
+        #00ffd5 ,
         #00eaff,
-        #6ddcff
+        hsl(217, 100%, 50%)
     );
     background-size: 300% 100%;
     animation: flowing 10s linear infinite;
@@ -88,6 +88,7 @@
     font-size: 1.25rem;
     padding-bottom: 6px;
     position: relative;
+    text-shadow: 0.05rem 0.05rem 0.01rem #fff;
 }
 
 @media (max-width: 640px), (max-height: 640px) {
