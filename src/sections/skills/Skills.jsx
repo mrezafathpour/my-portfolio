@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./Skills.css";
 
-/**
- * Static skills data
- */
 const SKILLS = [
     { name: "HTML", level: 90 },
     { name: "CSS", level: 95 },
@@ -23,43 +20,26 @@ const SKILLS = [
     { name: "Python", level: 75 },
 ];
 
-/**
- * Generate a random cubic-bezier easing function.
- * x1, x2 ∈ [0, 1]  (required by spec)
- * y1, y2 ∈ [-0.5, 1.5] to allow overshoot / bouncier curves (like your example)
- */
 const randomCubicBezier = () => {
-    const x1 = Math.random(); // 0 → 1
-    const x2 = Math.random(); // 0 → 1
-    const y1 = Math.random() * 2 - 0.5; // -0.5 → 1.5
-    const y2 = Math.random() * 2 - 0.5; // -0.5 → 1.5
+    const x1 = Math.random();
+    const x2 = Math.random();
+    const y1 = Math.random() * 2 - 0.5;
+    const y2 = Math.random() * 2 - 0.5;
 
-    const fx = (v) => Number(v.toFixed(2)); // nicer string
+    const fx = (v) => Number(v.toFixed(2));
 
     return `cubic-bezier(${fx(x1)},${fx(y1)},${fx(x2)},${fx(y2)})`;
 };
 
 const Skills = () => {
     const skillsRef = useRef(null);
-
-    /**
-     * animatedSkills: which skills have their bar animation started
-     * displayLevels: numeric value currently shown (0 → target level)
-     */
     const [animatedSkills, setAnimatedSkills] = useState({});
     const [displayLevels, setDisplayLevels] = useState({});
 
-    /**
-     * Per-skill animation configuration:
-     * - duration: 1–3 seconds
-     * - easing: random cubic-bezier
-     *
-     * This is generated once on mount and never changes.
-     */
     const [animConfig] = useState(() => {
         const config = {};
         SKILLS.forEach((skill) => {
-            const duration = Math.random() * 2 + 1; // 1–3 seconds
+            const duration = Math.random() * 2 + 1;
             const easing = randomCubicBezier();
             config[skill.name] = { duration, easing };
         });
@@ -80,7 +60,6 @@ const Skills = () => {
                     const skillName = entry.target.dataset.skillName;
                     if (!skillName) return;
 
-                    // Start bar width animation
                     setAnimatedSkills((prev) => ({
                         ...prev,
                         [skillName]: true,
@@ -89,16 +68,12 @@ const Skills = () => {
                     const config = animConfig[skillName];
                     const durationMs = (config?.duration ?? 1.5) * 1000;
 
-                    // Find the target level for this skill
+
                     const skillData = SKILLS.find((s) => s.name === skillName);
                     const target = skillData?.level ?? 0;
 
                     const start = performance.now();
 
-                    /**
-                     * Number animation: 0 → target over durationMs.
-                     * Uses requestAnimationFrame to sync with browser repaint.
-                     */
                     const step = (now) => {
                         if (isCancelled) return;
 
@@ -118,12 +93,11 @@ const Skills = () => {
 
                     requestAnimationFrame(step);
 
-                    // We only want to animate each skill once
                     observer.unobserve(entry.target);
                 });
             },
             {
-                threshold: 0.25, // trigger when at least 25% of the skill item is visible
+                threshold: 0.25,
             }
         );
 

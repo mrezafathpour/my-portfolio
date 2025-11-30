@@ -3,21 +3,11 @@ import Navbar from "../../components/navbar/Navbar";
 import "./Intro.css";
 
 const Intro = () => {
-    // Controls whether the text animation should be active (triggered by IntersectionObserver)
     const [isVisible, setIsVisible] = useState(false);
-
-    // Toggles between main title and description mode
-    // "title" | "description"
     const [mode, setMode] = useState("title");
 
-    /**
-     * Helper to re-trigger the letter animation:
-     * - We briefly set isVisible to false, then true on the next frames
-     * - This forces the CSS transitions on opacity/blur to run again
-     */
     const restartAnimation = () => {
         setIsVisible(false);
-        // Two RAFs to ensure the DOM updates with the invisible state
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 setIsVisible(true);
@@ -25,12 +15,6 @@ const Intro = () => {
         });
     };
 
-    /**
-     * IntersectionObserver:
-     * - Watches the #Intro section
-     * - When at least 50% is in view the first time, it sets isVisible to true
-     * - Then disconnects so it doesn't re-trigger when scrolling back
-     */
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -50,17 +34,6 @@ const Intro = () => {
         };
     }, []);
 
-    /**
-     * animateText
-     *
-     * text       → string to animate
-     * startDelay → base delay (in seconds) before any letter starts animating
-     * speed      → speed multiplier (larger = faster total reveal)
-     *
-     * The function:
-     * - splits text into words and characters
-     * - wraps each character in a <span> with its own staggered transition delay
-     */
     const animateText = (text, startDelay, speed) => {
         const baseStartDelay =
             typeof startDelay === "number" && !Number.isNaN(startDelay)
@@ -101,17 +74,11 @@ const Intro = () => {
                     }}
                 >
                     {letters}
-                    {/* Add a non-breaking space between words */}
                     {wordIndex !== words.length - 1 && "\u00A0"}
                 </div>
             );
         });
     };
-
-    /**
-     * Click handlers to toggle between title and description modes
-     * and restart the text animation each time.
-     */
     const handleTitleClick = () => {
         setMode("description");
         restartAnimation();
@@ -134,7 +101,6 @@ const Intro = () => {
                     {mode === "title" && (
                         <h1
                             className="disable-select"
-                            onClick={handleTitleClick}
                         >
                             <div className="sentence-wrapper">
                                 <span className="sentence">
@@ -149,7 +115,6 @@ const Intro = () => {
                     {mode === "description" && (
                         <div
                             className="sentence-wrapper"
-                            onClick={handleDescriptionClick}
                         >
                             <code className="sentence disable-select description">
                                 {animateText(
