@@ -1,7 +1,9 @@
 .contact-section {
-    margin-top: 80px;
-    padding: 40px 0;
     text-align: center;
+}
+
+.contact-section .wrapper {
+    margin: 5rem auto 2rem auto;
 }
 
 .contact-icons {

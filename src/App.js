@@ -7,14 +7,16 @@ import Contact from "./sections/contact/Contact";
 
 const App = () => {
     return (
-        <main className="App">
-            <GradientLights />
-            <Intro />
-            <Projects />
-            <Journey />
-            <Skills />
-            <Contact />
-        </main>
+        <>
+            <main className="App">
+                <GradientLights />
+                <Intro />
+                <Projects />
+                <Journey />
+                <Skills />
+                <Contact />
+            </main>
+        </>
     );
 };
 

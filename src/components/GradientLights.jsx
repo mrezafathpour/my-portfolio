@@ -113,7 +113,6 @@ export default function GradientLights({
 
     useEffect(() => {
         const el = containerRef.current;
-        console.log(el);
         if (!el) return;
 
         const W = el.offsetWidth;
