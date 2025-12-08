@@ -17,7 +17,6 @@ export default function Journey() {
 
         window.addEventListener("scroll", onScroll);
 
-        // run once in case it's already visible
         onScroll();
 
         return () => window.removeEventListener("scroll", onScroll);

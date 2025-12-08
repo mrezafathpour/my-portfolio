@@ -1,18 +1,17 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import "./Navbar.css";
 
-const navLinks = ["Intro", "Projects", "Journey", "Skills"];
+const navLinks = ["Intro", "Projects", "Skills", "Journey"];
 
 export default function Navbar({ handleIntro }) {
     const [hidden, setHidden] = useState(false);
-    const [isCompactLayout, setIsCompactLayout] = useState(false); // mobile + tablet (<=1024px)
+    const [isCompactLayout, setIsCompactLayout] = useState(false);
     const [activeSection, setActiveSection] = useState("Intro");
 
     const underlineRef = useRef(null);
     const linksRef = useRef([]);
     const lastScrollRef = useRef(0);
 
-    // Detect mobile/tablet layout by width only
     useEffect(() => {
         const checkLayout = () => {
             setIsCompactLayout(window.innerWidth <= 1024);
@@ -23,7 +22,6 @@ export default function Navbar({ handleIntro }) {
         return () => window.removeEventListener("resize", checkLayout);
     }, []);
 
-    // Hide navbar on scroll (same as your old logic)
     useEffect(() => {
         const handleScroll = () => {
             const current = window.scrollY;
@@ -42,27 +40,26 @@ export default function Navbar({ handleIntro }) {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Move underline under given link element
     const moveUnderline = useCallback((linkEl) => {
         const underline = underlineRef.current;
         if (!underline || !linkEl) return;
 
-        const rect = linkEl.getBoundingClientRect();
-        const left = linkEl.offsetLeft;
+        const container = linkEl.offsetParent;
+        if (!container) return;
+        const width = linkEl.offsetWidth;
+        const offsetX = linkEl.offsetLeft;
 
-        underline.style.width = `${rect.width}px`;
-        underline.style.left = `${left}px`;
+        underline.style.width = `${width}px`;
+        underline.style.transform = `translateX(${offsetX}px)`;
         underline.style.opacity = 1;
     }, []);
 
-    // Hide underline when mouse leaves nav (desktop only)
     const handleNavMouseLeave = useCallback(() => {
         if (isCompactLayout) return;
         const underline = underlineRef.current;
         if (underline) underline.style.opacity = 0;
     }, [isCompactLayout]);
 
-    // 🔹 Scroll spy (mobile + tablet): move underline when section ≥ 90% in viewport
     useEffect(() => {
         if (!isCompactLayout) return;
 
@@ -90,20 +87,17 @@ export default function Navbar({ handleIntro }) {
                 }
             });
 
-            // Only switch if at least 70% of screen is this section
             if (bestRatio >= 0.7 && bestId !== activeSection) {
                 setActiveSection(bestId);
             }
         };
 
         window.addEventListener("scroll", handleScrollSpy);
-        // run once on mount to align initial state
         handleScrollSpy();
 
         return () => window.removeEventListener("scroll", handleScrollSpy);
     }, [isCompactLayout, activeSection]);
 
-    // When activeSection changes on compact layout, move underline under that link
     useEffect(() => {
         if (!isCompactLayout) return;
 
@@ -116,7 +110,6 @@ export default function Navbar({ handleIntro }) {
         }
     }, [activeSection, isCompactLayout, moveUnderline]);
 
-    // Smooth scroll + click handling
     const handleLinkClick = (e, label, index) => {
         e.preventDefault();
 
@@ -140,7 +133,7 @@ export default function Navbar({ handleIntro }) {
     };
 
     return (
-        <nav className={`nav-container ${hidden ? "nav-hidden" : ""}`}>
+        <nav className={`nav-container${hidden ?  " nav-hidden" : ""}`}>
             <div className="nav-inner" onMouseLeave={handleNavMouseLeave}>
                 <span className="hover-underline" ref={underlineRef}></span>
                 {navLinks.map((label, i) => (
@@ -148,14 +141,15 @@ export default function Navbar({ handleIntro }) {
                         draggable="false"
                         key={label}
                         href={`#${label}`}
-                        className={`nav-link disable-select ${hidden ? "" : "fade-in-link"} ${
+                        className={`nav-link disable-select ${
+                            hidden ? "" : "fade-in-link"
+                        } ${
                             isCompactLayout && activeSection === label
                                 ? "is-active"
                                 : ""
                         }`}
                         style={{ animationDelay: `${i * 0.12}s` }}
                         ref={(el) => (linksRef.current[i] = el)}
-                        // desktop hover logic
                         onMouseEnter={
                             !isCompactLayout
                                 ? (e) => moveUnderline(e.currentTarget)

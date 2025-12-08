@@ -20,7 +20,7 @@ const Intro = () => {
             ([entry]) => {
                 if (entry.isIntersecting) {
                     setIsVisible(true);
-                    observer.disconnect(); // Only fire once
+                    observer.disconnect();
                 }
             },
             { threshold: 0.5 }
@@ -38,13 +38,13 @@ const Intro = () => {
         const baseStartDelay =
             typeof startDelay === "number" && !Number.isNaN(startDelay)
                 ? startDelay + 0.5
-                : 0.5; // seconds
+                : 0.5;
 
         const baseSpeed =
             typeof speed === "number" && !Number.isNaN(speed) ? speed : 1;
 
         const words = text.split(" ");
-        let globalIndex = 0; // used to keep increasing delay across the whole sentence
+        let globalIndex = 0;
 
         return words.map((word, wordIndex) => {
             const letters = word.split("").map((char, charIndex) => {
