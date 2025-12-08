@@ -24,22 +24,33 @@ export default function Navbar({ handleIntro }) {
 
     useEffect(() => {
         const handleScroll = () => {
-            const current = window.scrollY;
+            const doc = document.documentElement;
+            const rawScroll = window.pageYOffset ?? doc.scrollTop;
+
+            const viewportHeight = window.innerHeight;
+            const docHeight = doc.scrollHeight;
+            const maxScroll = docHeight - viewportHeight;
+            const current = Math.max(0, Math.min(rawScroll, maxScroll));
+
             const last = lastScrollRef.current;
 
-            if (current > last && current > 60) {
+            const isScrollingDown = current > last;
+            const isNearTop = current < 60;
+            const isAtBottom = maxScroll - current <= 2;
+
+            if (isAtBottom) {
+                setHidden(true);
+            } else if (isScrollingDown && !isNearTop) {
                 setHidden(true);
             } else {
                 setHidden(false);
             }
-
             lastScrollRef.current = current;
         };
 
-        window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
-
     const moveUnderline = useCallback((linkEl) => {
         const underline = underlineRef.current;
         if (!underline || !linkEl) return;
@@ -133,7 +144,7 @@ export default function Navbar({ handleIntro }) {
     };
 
     return (
-        <nav className={`nav-container${hidden ?  " nav-hidden" : ""}`}>
+        <nav className={`nav-container${hidden ? " nav-hidden" : ""}`}>
             <div className="nav-inner" onMouseLeave={handleNavMouseLeave}>
                 <span className="hover-underline" ref={underlineRef}></span>
                 {navLinks.map((label, i) => (
