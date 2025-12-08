@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/my-portfolio/static/css/main.6ce055ad.css",
-    "main.js": "/my-portfolio/static/js/main.f8dc919b.js",
+    "main.js": "/my-portfolio/static/js/main.5faa507b.js",
     "static/media/Aeonik-Bold.ttf": "/my-portfolio/static/media/Aeonik-Bold.81657f19d2fb319958c8.ttf",
     "static/media/Aeonik-Regular.ttf": "/my-portfolio/static/media/Aeonik-Regular.53b95a6b9aa7da4feab5.ttf",
     "index.html": "/my-portfolio/index.html",
     "main.6ce055ad.css.map": "/my-portfolio/static/css/main.6ce055ad.css.map",
-    "main.f8dc919b.js.map": "/my-portfolio/static/js/main.f8dc919b.js.map"
+    "main.5faa507b.js.map": "/my-portfolio/static/js/main.5faa507b.js.map"
   },
   "entrypoints": [
     "static/css/main.6ce055ad.css",
-    "static/js/main.f8dc919b.js"
+    "static/js/main.5faa507b.js"
   ]
 }
