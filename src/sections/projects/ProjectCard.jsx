@@ -39,7 +39,6 @@ export default function ProjectCard({ project, isMobile }) {
         startChangeImage(newIndex);
     };
 
-    // Dot click handler
     const handleDotClick = (dotIndex) => {
         startChangeImage(dotIndex);
     };

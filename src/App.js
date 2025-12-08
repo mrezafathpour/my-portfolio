@@ -12,8 +12,8 @@ const App = () => {
                 <GradientLights />
                 <Intro />
                 <Projects />
-                <Journey />
                 <Skills />
+                <Journey />
                 <Contact />
             </main>
         </>

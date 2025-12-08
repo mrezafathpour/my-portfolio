@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-// ---------- COLOR GROUPS ----------
 const gradientGroups = {
     pinkPurple: [
         ["#ff007f", "#8a2be2"],
@@ -51,7 +50,6 @@ const gradientGroups = {
     ],
 };
 
-// Pick 1 gradient from unique hue groups first, then fill the rest non-repeated.
 function selectUniqueGradients(count) {
     const groups = [...Object.values(gradientGroups)].sort(
         () => Math.random() - 0.5
@@ -83,7 +81,6 @@ function selectUniqueGradients(count) {
     return result;
 }
 
-// Dynamic size based on screen width
 function getLightSize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -92,14 +89,12 @@ function getLightSize() {
     return 360;
 }
 
-// Random position inside container
 function randomPosition(W, H, SIZE) {
     let x = Math.random() * (W - SIZE);
     let y = Math.random() * (H - SIZE);
     return { x, y };
 }
 
-// ---------- MAIN COMPONENT ----------
 export default function GradientLights({
     count = 4 + Math.floor(Math.random() * 4),
     movementSpeed = 1,
@@ -166,7 +161,6 @@ export default function GradientLights({
         return () => timeouts.forEach(clearTimeout);
     }, [lights, movementSpeed]);
 
-    // ---- RESIZE HANDLER (also fixes effects) ----
     useEffect(() => {
         function handleResize() {
             const el = containerRef.current;
@@ -179,17 +173,13 @@ export default function GradientLights({
             const deltaW = Math.abs(w - prev.w);
             const deltaH = Math.abs(h - prev.h);
 
-            // Ignore small changes (tweak thresholds if you like)
-            const MIN_DELTA_W = 100; // e.g. orientation / major layout change
+            const MIN_DELTA_W = 100;
             const MIN_DELTA_H = 100;
 
-            // On mobile Safari, height changes a lot due to address bar,
-            // so we usually care more about width OR a big height change.
             if (deltaW < MIN_DELTA_W && deltaH < MIN_DELTA_H) {
                 return;
             }
 
-            // Update stored size
             lastSizeRef.current = { w, h };
 
             const W = el.offsetWidth;

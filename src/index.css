@@ -123,22 +123,6 @@ code {
     }
 }
 
-/* 2XL (2xl) ≥ 1536px */
-@media (min-width: 1536px) {
-}
-
-@media (max-width: 1536px) {
-}
-
-@media (max-width: 1280px) {
-}
-
-@media (max-width: 1024px) {
-}
-
-@media (max-width: 768px) {
-}
-
 @media (max-width: 640px), (max-height: 640px) {
     .section-header h2 {
         font-size: 1.75rem;

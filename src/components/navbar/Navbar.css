@@ -2,8 +2,6 @@
     position: fixed;
     bottom: 2rem;
     left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
     padding: 14px 30px;
     border-radius: 22px;
     background: rgba(255, 255, 255, 0.08);
@@ -11,25 +9,41 @@
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow: 0 4px 28px rgba(0, 0, 0, 0.25);
-    transition: opacity 0.35s ease, transform 0.35s ease;
-    animation: navbarFloat 6s ease-in-out infinite;
+    animation: navbarExpand 0.35s ease forwards;
+    z-index: 1;
 }
 
-.nav-hidden {
-    opacity: 0;
-    transform: translateX(-50%) translateY(50px);
-    pointer-events: none;
+.nav-container.nav-hidden {
+    animation: navbarCollapse 0.35s ease-out forwards;
 }
 
-@keyframes navbarFloat {
+@keyframes navbarExpand {
     0% {
-        transform: translateX(-50%) translateY(0px);
-    }
-    50% {
-        transform: translateX(-50%) translateY(-8px);
+        opacity: 0;
+        transform: translateX(-50%) translateY(1rem) scale(0.7);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        backdrop-filter: blur(4px);
     }
     100% {
-        transform: translateX(-50%) translateY(0px);
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 4px 28px rgba(0, 0, 0, 0.25);
+    }
+}
+
+@keyframes navbarCollapse {
+    0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 4px 28px rgba(0, 0, 0, 0.25);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(1rem) scale(0.7);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        backdrop-filter: blur(4px);
     }
 }
 
@@ -91,11 +105,5 @@
 
     .nav-container {
         bottom: 1rem;
-    }
-}
-
-@media (max-height: 640px) {
-    .nav-container {
-        bottom: 0.5rem;
     }
 }
