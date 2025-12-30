@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { MyJourney } from "../../store/MyData";
+import { GlyphPlasmaBackground } from "../../components/GlyphPlasmaBackground";
 import "./Journey.css";
 
 export default function Journey() {
@@ -36,7 +37,22 @@ export default function Journey() {
                 <div className="journey-timeline">
                     {MyJourney.map((entry, index) => (
                         <div className="timeline-item" key={index}>
-                            <div className="timeline-content">
+                            <div
+                                className="timeline-content"
+                                style={{
+                                    overflow: "hidden",
+                                    position: "relative",
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        inset: 0,
+                                        zIndex: -1,
+                                    }}
+                                >
+                                    <GlyphPlasmaBackground seed={index} />
+                                </div>
                                 <p className="timeline-date">{entry.date}</p>
                                 <h3 className="timeline-title">
                                     {entry.title}
