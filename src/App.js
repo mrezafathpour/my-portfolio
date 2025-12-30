@@ -4,7 +4,6 @@ import Skills from "./sections/skills/Skills";
 import Projects from "./sections/projects/Projects";
 import Journey from "./sections/journey/Journey";
 import Contact from "./sections/contact/Contact";
-
 const App = () => {
     return (
         <>
