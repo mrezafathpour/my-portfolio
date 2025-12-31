@@ -160,7 +160,7 @@
     margin: 2rem 0;
     opacity: 0.75;
     font-size: 1.25rem;
-    line-height: 1.75rem;
+    line-height: 2.25rem;
 }
 
 .timeline-end {
@@ -199,7 +199,7 @@
 @media (max-width: 1024px) {
     .timeline-description {
         font-size: 1rem;
-        line-height: 1.5rem;
+        line-height: 1.75rem;
     }
 
     .timeline-title {

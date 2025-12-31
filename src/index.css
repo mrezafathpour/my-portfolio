@@ -81,13 +81,18 @@ code {
         monospace;
 }
 
+section {
+    padding: 5rem 0;
+}
+
 .wrapper {
     max-width: 100rem;
-    margin: 5rem auto 10rem auto;
+    margin: 0 auto;
     padding: 0 1rem;
 }
 
 .section-header {
+    padding: 0 1rem;
     text-align: center;
     margin-bottom: 5rem;
 }
