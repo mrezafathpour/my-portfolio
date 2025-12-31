@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from "react";
 export function GlyphPlasmaBackground({
     className,
     seed = 0,
-    glyphs = "  ...+*#$", // " .:;=+*#%@",
+    glyphs = " .:;=+*#%@$&",
     sizes = {
         base: { cellSize: 10, fontSize: 14 },
         mobile: { cellSize: 8, fontSize: 10 },
@@ -15,7 +15,7 @@ export function GlyphPlasmaBackground({
     fontFamily = "main-normal ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
     speed = 1,
     fps = 120,
-    trailStrength = 0.3,
+    trailStrength = 0.5,
     maxCells = 200000,
     // Reads this CSS variable for the draw color
     colorVar = "--glyph-color",

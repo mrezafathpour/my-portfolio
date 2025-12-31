@@ -68,7 +68,6 @@ const Skills = () => {
                     const config = animConfig[skillName];
                     const durationMs = (config?.duration ?? 1.5) * 1000;
 
-
                     const skillData = SKILLS.find((s) => s.name === skillName);
                     const target = skillData?.level ?? 0;
 
@@ -113,12 +112,11 @@ const Skills = () => {
 
     return (
         <section className="skills-section" ref={skillsRef} id="Skills">
+            <div className="section-header">
+                <h2>My Skills</h2>
+                <p>Latest update of my programming skills</p>
+            </div>
             <div className="wrapper">
-                <div className="section-header">
-                    <h2>My Skills</h2>
-                    <p>Latest update of my programming skills</p>
-                </div>
-
                 <div className="skills-container">
                     {SKILLS.map((skill) => {
                         const cfg = animConfig[skill.name] || {};

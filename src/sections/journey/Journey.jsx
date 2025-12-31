@@ -25,15 +25,14 @@ export default function Journey() {
 
     return (
         <section id="Journey" className="journey-section">
+            <div className="section-header">
+                <h2>Journey</h2>
+                <p>
+                    A timeline of what I’ve been building, learning, and
+                    focusing on
+                </p>
+            </div>
             <div className="wrapper">
-                <div className="section-header">
-                    <h2>Journey</h2>
-                    <p>
-                        A timeline of what I’ve been building, learning, and
-                        focusing on
-                    </p>
-                </div>
-
                 <div className="journey-timeline">
                     {MyJourney.map((entry, index) => (
                         <div className="timeline-item" key={index}>

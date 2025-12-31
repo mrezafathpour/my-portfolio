@@ -29,11 +29,11 @@ export default function Projects() {
 
     return (
         <section className="Projects" id="Projects">
+            <div className="section-header">
+                <h2>Projects</h2>
+                <p>Showcasing some of my accomplished projects</p>
+            </div>
             <div className="wrapper">
-                <div className="section-header">
-                    <h2>Projects</h2>
-                    <p>Showcasing some of my accomplished projects</p>
-                </div>
                 <div className="projects-grid">
                     {MyProjects.map((project) => (
                         <ProjectCard
