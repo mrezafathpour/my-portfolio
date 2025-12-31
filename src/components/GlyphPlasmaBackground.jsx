@@ -17,16 +17,12 @@ export function GlyphPlasmaBackground({
     fps = 120,
     trailStrength = 0.5,
     maxCells = 200000,
-    // Reads this CSS variable for the draw color
     colorVar = "--glyph-color",
-    // Fallbacks if the CSS variable is missing
     fallbackLight = "rgba(0, 0, 0, 0.05)",
     fallbackDark = "rgba(255, 255, 255, 0.05)",
     respectReducedMotion = true,
-    // Safety clamps to avoid "Canvas exceeds max size"
     maxCanvasDim = 8192,
     maxCanvasArea = 8192 * 8192,
-    // Motion tuning
     blobStrength = 1,
     shimmerStrength = 0.06,
 }) {
@@ -48,7 +44,6 @@ export function GlyphPlasmaBackground({
         let raf = 0;
         let lastFrameTime = 0;
 
-        // cached sizing
         let cssW = 0;
         let cssH = 0;
         let renderDpr = 1;
@@ -73,16 +68,13 @@ export function GlyphPlasmaBackground({
             activeCellSize = chosen?.cellSize ?? base.cellSize ?? 10;
             activeFontSize = chosen?.fontSize ?? base.fontSize ?? 14;
 
-            // Update font immediately
             ctx.font = `${activeFontSize}px ${fontFamily}`;
         };
 
         pickSizes();
 
-        // cached color (so we don't call getComputedStyle a thousand times per second)
         let glyphColor = fallbackDark;
 
-        // Read the CSS variable from the nearest element (parent) so scoped CSS works
         const readGlyphColorFromCSS = () => {
             const host = canvas.parentElement || document.documentElement;
             const styles = getComputedStyle(host);
@@ -90,7 +82,6 @@ export function GlyphPlasmaBackground({
             const value = (styles.getPropertyValue(colorVar) || "").trim();
             if (value) return value;
 
-            // fallback if var not found
             const mq = window.matchMedia
                 ? window.matchMedia("(prefers-color-scheme: dark)")
                 : null;
@@ -106,17 +97,14 @@ export function GlyphPlasmaBackground({
 
             const rect = parent.getBoundingClientRect();
 
-            // Round to reduce layout thrash
             let newCssW = Math.max(1, Math.round(rect.width));
             let newCssH = Math.max(1, Math.round(rect.height));
 
-            // Keep sane in case layout reports something wild
             newCssW = Math.min(newCssW, maxCanvasDim);
             newCssH = Math.min(newCssH, maxCanvasDim);
 
             const dpr = Math.max(1, window.devicePixelRatio || 1);
 
-            // clamp DPR by dimension + area
             let dprCandidate = dpr;
             dprCandidate = Math.min(
                 dprCandidate,
@@ -150,7 +138,6 @@ export function GlyphPlasmaBackground({
             if (canvas.width !== pxW) canvas.width = pxW;
             if (canvas.height !== pxH) canvas.height = pxH;
 
-            // draw in CSS pixel coords
             ctx.setTransform(renderDpr, 0, 0, renderDpr, 0, 0);
             ctx.textBaseline = "top";
             ctx.textAlign = "left";
@@ -158,26 +145,22 @@ export function GlyphPlasmaBackground({
             ctx.font = `${activeFontSize}px ${fontFamily}`;
         };
 
-        // tiny deterministic hash (0..1)
         const hash2 = (x, y) => {
             const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453123;
             return s - Math.floor(s);
         };
 
-        // blob influence
         const blob = (x, y, cx, cy, k) => {
             const dx = x - cx;
             const dy = y - cy;
             return 1 / (1 + k * (dx * dx + dy * dy));
         };
 
-        // Listen to OS theme changes (same thing CSS @media uses)
         const mq = window.matchMedia
             ? window.matchMedia("(prefers-color-scheme: dark)")
             : null;
         const onSchemeChange = () => {
             glyphColor = readGlyphColorFromCSS();
-            // Clear trails so you don’t see “ghosting” from the previous theme
             ctx.clearRect(0, 0, cssW, cssH);
         };
         if (mq) {
@@ -190,7 +173,6 @@ export function GlyphPlasmaBackground({
             raf = requestAnimationFrame(drawFrame);
             if (prefersReduced) return;
 
-            // throttle FPS
             if (fps > 0) {
                 const minDt = 1000 / fps;
                 if (now - lastFrameTime < minDt) return;
@@ -216,7 +198,6 @@ export function GlyphPlasmaBackground({
             const cols = Math.ceil(cssW / effectiveCell);
             const rows = Math.ceil(cssH / effectiveCell);
 
-            // Trails
             if (trailStrength > 0) {
                 ctx.save();
                 ctx.globalCompositeOperation = "destination-in";
@@ -231,12 +212,10 @@ export function GlyphPlasmaBackground({
 
             const t = (now / 1000) * speed + seed * 1000;
 
-            // Time-only oscillators => morphing in place (no diagonal drift)
             const s1 = Math.sin(t * 0.9);
             const s2 = Math.sin(t * 1.3 + 1.7);
             const s3 = Math.sin(t * 0.6 + 3.1);
 
-            // Orbiting blob centers => emergent shapes
             const cx1 = cols * (0.5 + 0.25 * Math.sin(t * 0.23));
             const cy1 = rows * (0.5 + 0.25 * Math.cos(t * 0.19));
             const cx2 = cols * (0.5 + 0.3 * Math.sin(t * 0.17 + 2.0));
