@@ -49,8 +49,9 @@ export default function Contact() {
 
                 <footer>
                     <p className="footer-note">
-                        Version {packageInfo.version} - Copyright ©{" "}
-                        {new Date().getFullYear()} Designed & Developed by <strong>Mohammadreza Fathpour</strong> - All Rights Reserved
+                        v{packageInfo.version} © Copyright {new Date().getFullYear()}{" "}
+                        Designed & Developed by{" "}
+                        <strong>Mohammadreza Fathpour</strong>
                     </p>
                 </footer>
             </div>

@@ -15,11 +15,11 @@ export function GlyphPlasmaBackground({
     fontFamily = "main-normal ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
     speed = 1,
     fps = 120,
-    trailStrength = 0.5,
+    trailStrength = 0,
     maxCells = 200000,
     colorVar = "--glyph-color",
-    fallbackLight = "rgba(0, 0, 0, 0.05)",
-    fallbackDark = "rgba(255, 255, 255, 0.05)",
+    fallbackLight = "rgba(0, 0, 0, 0.08)",
+    fallbackDark = "rgba(255, 255, 255, 0.08)",
     respectReducedMotion = true,
     maxCanvasDim = 8192,
     maxCanvasArea = 8192 * 8192,
@@ -198,15 +198,7 @@ export function GlyphPlasmaBackground({
             const cols = Math.ceil(cssW / effectiveCell);
             const rows = Math.ceil(cssH / effectiveCell);
 
-            if (trailStrength > 0) {
-                ctx.save();
-                ctx.globalCompositeOperation = "destination-in";
-                ctx.fillStyle = `rgba(0,0,0,${1 - trailStrength})`;
-                ctx.fillRect(0, 0, cssW, cssH);
-                ctx.restore();
-            } else {
-                ctx.clearRect(0, 0, cssW, cssH);
-            }
+            ctx.clearRect(0, 0, cssW, cssH);
 
             ctx.fillStyle = glyphColor;
 

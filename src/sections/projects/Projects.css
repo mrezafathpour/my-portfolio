@@ -117,6 +117,34 @@
     }
 }
 
+@media (max-width: 1536px) {
+    .project-card {
+        padding: 0 0 2rem 0;
+    }
+    .project-image-wrapper {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .project-card .description,
+    .dots {
+        padding: 0 2rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .project-card {
+        padding: 0 0 1rem 0;
+    }
+    .project-card .description,
+    .dots {
+        padding: 0 1rem;
+    }
+    .projects-grid {
+        grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+        gap: 1rem;
+    }
+}
+
 @media (max-width: 768px) {
     .project-title {
         font-size: 1.25rem;

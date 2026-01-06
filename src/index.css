@@ -12,8 +12,6 @@
     --text-dark-mode: #eeeef4;
     --primary-dark-mode: hsl(217, 100%, 80%);
     --secondary-dark-mode: #a1a8ae;
-
-    --glyph-color: rgba(0, 0, 0, 0.05);
 }
 
 @font-face {
@@ -57,7 +55,6 @@ body a {
 @media (prefers-color-scheme: dark) {
     :root {
         color-scheme: dark;
-        --glyph-color: rgba(255, 255, 255, 0.05)
     }
     body {
         background-color: var(--background-dark-mode);
@@ -113,23 +110,24 @@ section {
 /* Medium (md) ≥ 768px */
 @media (min-width: 768px) {
     .wrapper {
-        padding: 0 2.5rem;
+        padding: 0 2rem;
     }
 }
 
 /* Large (lg) ≥ 1024px */
 @media (min-width: 1024px) {
     .wrapper {
-        padding: 0 5rem;
+        padding: 0 4rem;
     }
 }
 
-/* Extra Large (xl) ≥ 1280px */
-@media (min-width: 1280px) {
+/* 2 Extra Large (xl) ≥ 1536px */
+@media (min-width: 1536px) {
     .wrapper {
-        padding: 0 10rem;
+        padding: 0 8rem;
     }
 }
+
 
 @media (max-width: 640px), (max-height: 640px) {
     .section-header h2 {
