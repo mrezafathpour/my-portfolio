@@ -85,7 +85,7 @@ function getLightSize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
     if (width < 640 || height < 640) return 120;
-    if (width < 1024) return 240;
+    if (width < 1700) return 240;
     return 360;
 }
 
