@@ -22,7 +22,7 @@
         rgba(0, 96, 255, 1),
         rgba(0, 96, 255, 0.3)
     );
-    box-shadow: 0 0 5rem 0.1rem rgba(0, 96, 255, 0.5);
+    /* box-shadow: 0 0 0.5rem 0.01rem rgba(0, 96, 255, 0.5); */
     pointer-events: none;
 }
 
