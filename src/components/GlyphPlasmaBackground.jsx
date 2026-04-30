@@ -6,9 +6,8 @@ export function GlyphPlasmaBackground({
     glyphs = " .:;=+*#%@$&",
     sizes = {
         base: { cellSize: 10, fontSize: 14 },
-        mobile: { cellSize: 8, fontSize: 10 },
         tablet: { cellSize: 11, fontSize: 15 },
-        desktop: { cellSize: 16, fontSize: 20 },
+        desktop: { cellSize: 13, fontSize: 15 },
     },
     breakpoints = { mobile: 640, tablet: 1024 },
 
@@ -18,7 +17,7 @@ export function GlyphPlasmaBackground({
     trailStrength = 0,
     maxCells = 200000,
     colorVar = "--glyph-color",
-    fallbackLight = "rgba(0, 0, 0, 0.05)",
+    fallbackLight = "rgba(0, 0, 0, 0.06)",
     fallbackDark = "rgba(255, 255, 255, 0.05)",
     respectReducedMotion = true,
     maxCanvasDim = 8192,
