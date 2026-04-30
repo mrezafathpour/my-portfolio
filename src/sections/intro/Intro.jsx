@@ -4,7 +4,7 @@ import "./Intro.css";
 
 const Intro = () => {
     const [isVisible, setIsVisible] = useState(false);
-    const [mode, setMode] = useState("title");
+    const [titleMode, setTitleMode] = useState(true);
 
     const restartAnimation = () => {
         setIsVisible(false);
@@ -79,26 +79,19 @@ const Intro = () => {
             );
         });
     };
-    const handleTitleClick = () => {
-        setMode("description");
-        restartAnimation();
-    };
-
-    const handleDescriptionClick = () => {
-        setMode("title");
+    const handleIntroductionClick = () => {
+        setTitleMode(!titleMode);
         restartAnimation();
     };
 
     return (
         <>
             <Navbar
-                handleIntro={
-                    mode === "title" ? handleTitleClick : handleDescriptionClick
-                }
+                handleIntro={handleIntroductionClick}
             />
             <section className="intro-section" id="Intro">
                 <div className="wrapper">
-                    {mode === "title" && (
+                    {titleMode && (
                         <h1
                             className="disable-select"
                         >
@@ -112,7 +105,7 @@ const Intro = () => {
                             </div>
                         </h1>
                     )}
-                    {mode === "description" && (
+                    {!titleMode && (
                         <div
                             className="sentence-wrapper"
                         >

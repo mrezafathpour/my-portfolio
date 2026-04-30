@@ -1,24 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { SKILLS } from "../../store/MyData";
 import "./Skills.css";
-
-const SKILLS = [
-    { name: "HTML", level: 90 },
-    { name: "CSS", level: 95 },
-    { name: "JavaScript", level: 80 },
-    { name: "TypeScript", level: 60 },
-    { name: "React.", level: 85 },
-    { name: "Next.js", level: 75 },
-    { name: "Git", level: 65 },
-    { name: "React Redux", level: 70 },
-    { name: "PWA", level: 90 },
-    { name: "React Query", level: 50 },
-    { name: "OOP", level: 20 },
-    { name: "Material UI", level: 35 },
-    { name: "Jest.js", level: 65 },
-    { name: "Webpack", level: 55 },
-    { name: "SASS", level: 80 },
-    { name: "Python", level: 75 },
-];
 
 const randomCubicBezier = () => {
     const x1 = Math.random();
