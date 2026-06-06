@@ -18,7 +18,7 @@ export function GlyphPlasmaBackground({
     maxCells = 200000,
     colorVar = "--glyph-color",
     fallbackLight = "rgba(0, 0, 0, 0.06)",
-    fallbackDark = "rgba(255, 255, 255, 0.05)",
+    fallbackDark = "rgba(255, 255, 255, 0.06)",
     respectReducedMotion = true,
     maxCanvasDim = 8192,
     maxCanvasArea = 8192 * 8192,
@@ -61,8 +61,8 @@ export function GlyphPlasmaBackground({
                 w < bpMobile
                     ? sizes?.mobile
                     : w < bpTablet
-                    ? sizes?.tablet
-                    : sizes?.desktop;
+                      ? sizes?.tablet
+                      : sizes?.desktop;
 
             activeCellSize = chosen?.cellSize ?? base.cellSize ?? 10;
             activeFontSize = chosen?.fontSize ?? base.fontSize ?? 14;
@@ -108,14 +108,14 @@ export function GlyphPlasmaBackground({
             dprCandidate = Math.min(
                 dprCandidate,
                 maxCanvasDim / newCssW,
-                maxCanvasDim / newCssH
+                maxCanvasDim / newCssH,
             );
 
             const areaAt1 = newCssW * newCssH;
             if (areaAt1 > 0) {
                 dprCandidate = Math.min(
                     dprCandidate,
-                    Math.sqrt(maxCanvasArea / areaAt1)
+                    Math.sqrt(maxCanvasArea / areaAt1),
                 );
             }
             dprCandidate = Math.max(1, dprCandidate);
@@ -246,7 +246,7 @@ export function GlyphPlasmaBackground({
 
                     const idx = Math.min(
                         glyphArr.length - 1,
-                        Math.floor(n * glyphArr.length)
+                        Math.floor(n * glyphArr.length),
                     );
                     const ch = glyphArr[idx];
                     if (ch === " ") continue;

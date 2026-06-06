@@ -69,7 +69,7 @@ body a {
     }
 
     .project-image-wrapper {
-        filter: brightness(0.75) contrast(1.1);
+        filter: brightness(0.65) contrast(1.1);
     }
 }
 

@@ -65,7 +65,10 @@
     }
 }
 
-@media (max-width: 1280px) {
+@media (min-width: 1024px) and (max-width: 1536px) {
+    .intro-section .sentence-wrapper {
+        padding: 0 8rem;
+    }
 }
 
 @media (max-width: 1024px) {
@@ -108,7 +111,7 @@
 }
 
 @media (max-height: 640px) {
-    .intro-section .wrapper  {
+    .intro-section .wrapper {
         margin: 2rem auto;
         padding-bottom: 4rem;
     }
