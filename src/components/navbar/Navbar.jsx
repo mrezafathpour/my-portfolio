@@ -1,12 +1,14 @@
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigation } from "../../features/navigation/NavigationContext";
 import "./Navbar.css";
 
 const navLinks = ["Intro", "Projects", "Skills", "Journey"];
 
-export default function Navbar({ handleIntro }) {
+export default function Navbar() {
     const [hidden, setHidden] = useState(false);
     const [isCompactLayout, setIsCompactLayout] = useState(false);
     const [activeSection, setActiveSection] = useState("Intro");
+    const { handleIntro } = useNavigation();
 
     const underlineRef = useRef(null);
     const linksRef = useRef([]);
@@ -132,7 +134,7 @@ export default function Navbar({ handleIntro }) {
             });
         }
 
-        if (label === "Intro") {
+        if (label === "Intro" && handleIntro) {
             handleIntro();
         }
 
