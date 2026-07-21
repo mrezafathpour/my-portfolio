@@ -4,10 +4,10 @@ import Skills from "./sections/skills/Skills";
 import Projects from "./sections/projects/Projects";
 import Journey from "./sections/journey/Journey";
 import Contact from "./sections/contact/Contact";
-import { NavigationContext } from "./features/navigation/NavigationContext";
+import { NavigationProvider } from "./features/navigation/NavigationContext";
 const App = () => {
     return (
-        <>
+        <NavigationProvider>
             <main className="App">
                 <GradientLights />
                 <Intro />
@@ -16,7 +16,7 @@ const App = () => {
                 <Journey />
                 <Contact />
             </main>
-        </>
+        </NavigationProvider>
     );
 };
 

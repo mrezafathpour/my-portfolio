@@ -231,6 +231,10 @@ export default function GradientLights({
                                 9 / movementSpeed
                             }s linear, opacity 2s ease`,
                             transform: `translate(${pos.x}px, ${pos.y}px)`,
+                            WebkitUserSelect: "none",
+                            MozUserSelect: "none",
+                            MsUserSelect: "none",
+                            userSelect: "none",
                         }}
                     />
                 );

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../components/navbar/Navbar";
+import { useNavigation } from "../../features/navigation/NavigationContext";
 import "./Intro.css";
 
 const Intro = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [titleMode, setTitleMode] = useState(true);
+    const { setHandleIntro } = useNavigation();
 
     const restartAnimation = () => {
         setIsVisible(false);
@@ -84,11 +86,15 @@ const Intro = () => {
         restartAnimation();
     };
 
+    useEffect(() => {
+        setHandleIntro(() => handleIntroductionClick);
+
+        return () => setHandleIntro(null);
+    }, [handleIntroductionClick, setHandleIntro]);
+
     return (
         <>
-            <Navbar
-                handleIntro={handleIntroductionClick}
-            />
+            <Navbar />
             <section className="intro-section" id="Intro">
                 <div className="wrapper">
                     {titleMode && (
