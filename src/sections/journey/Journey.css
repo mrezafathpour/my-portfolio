@@ -135,6 +135,17 @@
     box-shadow: 0 8px 26px rgba(15, 23, 42, 0.1);
 }
 
+/* A dark shadow disappears on the dark page, so the card is lifted with a
+   slightly lighter surface, a brighter edge and a much deeper shadow */
+@media (prefers-color-scheme: dark) {
+    .timeline-content {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 255, 255, 0.14);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55),
+            0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+}
+
 .timeline-content ul {
     padding-left: 1.5rem;
 }
@@ -146,8 +157,6 @@
     font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    /* color: rgba(0, 96, 255, 1); */
-    color: rgba(0, 96, 255, 1);
 }
 
 .timeline-title {
@@ -161,6 +170,8 @@
     opacity: 0.75;
     font-size: 1.25rem;
     line-height: 2.25rem;
+    font-family:
+        source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 .timeline-end {

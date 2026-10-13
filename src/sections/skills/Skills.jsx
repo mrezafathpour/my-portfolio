@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SKILLS } from "../../store/MyData";
 import "./Skills.css";
 
@@ -13,26 +13,110 @@ const randomCubicBezier = () => {
     return `cubic-bezier(${fx(x1)},${fx(y1)},${fx(x2)},${fx(y2)})`;
 };
 
+const randomAnimConfig = () => ({
+    duration: Math.random() * 2 + 1,
+    easing: randomCubicBezier(),
+});
+
 const Skills = () => {
     const skillsRef = useRef(null);
     const [animatedSkills, setAnimatedSkills] = useState({});
     const [displayLevels, setDisplayLevels] = useState({});
+    const [replayCounts, setReplayCounts] = useState({});
 
-    const [animConfig] = useState(() => {
+    // Latest run per skill; an older or cancelled run stops counting
+    const runTokensRef = useRef({});
+
+    const [animConfig, setAnimConfig] = useState(() => {
         const config = {};
         SKILLS.forEach((skill) => {
-            const duration = Math.random() * 2 + 1;
-            const easing = randomCubicBezier();
-            config[skill.name] = { duration, easing };
+            config[skill.name] = randomAnimConfig();
         });
         return config;
     });
 
+    // Mirror of animConfig for the counter, so a re-rolled config does not
+    // recreate animateSkill (and with it the scroll observer)
+    const animConfigRef = useRef(animConfig);
+
+    const animateSkill = useCallback(
+        (skillName) => {
+            const token = (runTokensRef.current[skillName] ?? 0) + 1;
+            runTokensRef.current[skillName] = token;
+
+            setAnimatedSkills((prev) => ({
+                ...prev,
+                [skillName]: true,
+            }));
+
+            const config = animConfigRef.current[skillName];
+            const durationMs = (config?.duration ?? 1.5) * 1000;
+
+            const skillData = SKILLS.find((s) => s.name === skillName);
+            const target = skillData?.level ?? 0;
+
+            const start = performance.now();
+
+            const step = (now) => {
+                if (runTokensRef.current[skillName] !== token) return;
+
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / durationMs, 1);
+                const value = Math.round(target * progress);
+
+                setDisplayLevels((prev) => ({
+                    ...prev,
+                    [skillName]: value,
+                }));
+
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                }
+            };
+
+            requestAnimationFrame(step);
+        },
+        []
+    );
+
+    // Empties the bar instantly (a fresh fill element, so it does not animate
+    // backwards) and then fills it up again with a new random speed and easing
+    const replaySkill = (skillName) => {
+        const token = (runTokensRef.current[skillName] ?? 0) + 1;
+        runTokensRef.current[skillName] = token;
+
+        const config = randomAnimConfig();
+        animConfigRef.current = {
+            ...animConfigRef.current,
+            [skillName]: config,
+        };
+        setAnimConfig((prev) => ({ ...prev, [skillName]: config }));
+
+        setAnimatedSkills((prev) => ({ ...prev, [skillName]: false }));
+        setDisplayLevels((prev) => ({ ...prev, [skillName]: 0 }));
+        setReplayCounts((prev) => ({
+            ...prev,
+            [skillName]: (prev[skillName] ?? 0) + 1,
+        }));
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                if (runTokensRef.current[skillName] !== token) return;
+                animateSkill(skillName);
+            });
+        });
+    };
+
+    const handleSkillKeyDown = (e, skillName) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+
+        e.preventDefault();
+        replaySkill(skillName);
+    };
+
     useEffect(() => {
         const observerTarget = skillsRef.current;
         if (!observerTarget) return;
-
-        let isCancelled = false;
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -42,37 +126,7 @@ const Skills = () => {
                     const skillName = entry.target.dataset.skillName;
                     if (!skillName) return;
 
-                    setAnimatedSkills((prev) => ({
-                        ...prev,
-                        [skillName]: true,
-                    }));
-
-                    const config = animConfig[skillName];
-                    const durationMs = (config?.duration ?? 1.5) * 1000;
-
-                    const skillData = SKILLS.find((s) => s.name === skillName);
-                    const target = skillData?.level ?? 0;
-
-                    const start = performance.now();
-
-                    const step = (now) => {
-                        if (isCancelled) return;
-
-                        const elapsed = now - start;
-                        const progress = Math.min(elapsed / durationMs, 1);
-                        const value = Math.round(target * progress);
-
-                        setDisplayLevels((prev) => ({
-                            ...prev,
-                            [skillName]: value,
-                        }));
-
-                        if (progress < 1) {
-                            requestAnimationFrame(step);
-                        }
-                    };
-
-                    requestAnimationFrame(step);
+                    animateSkill(skillName);
 
                     observer.unobserve(entry.target);
                 });
@@ -87,10 +141,10 @@ const Skills = () => {
         skillElements.forEach((el) => observer.observe(el));
 
         return () => {
-            isCancelled = true;
+            runTokensRef.current = {};
             observer.disconnect();
         };
-    }, [animConfig]);
+    }, [animateSkill]);
 
     return (
         <section className="skills-section" ref={skillsRef} id="Skills">
@@ -107,8 +161,15 @@ const Skills = () => {
                         return (
                             <div
                                 key={skill.name}
-                                className="skill-item"
+                                className="skill-item disable-select"
                                 data-skill-name={skill.name}
+                                role="button"
+                                tabIndex={0}
+                                title="Replay"
+                                onClick={() => replaySkill(skill.name)}
+                                onKeyDown={(e) =>
+                                    handleSkillKeyDown(e, skill.name)
+                                }
                             >
                                 <div className="skill-header">
                                     <span className="skill-name">
@@ -121,6 +182,7 @@ const Skills = () => {
 
                                 <div className="skill-bar">
                                     <div
+                                        key={replayCounts[skill.name] ?? 0}
                                         className="skill-fill"
                                         style={{
                                             width: animatedSkills[skill.name]

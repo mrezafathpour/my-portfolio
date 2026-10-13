@@ -1,27 +1,38 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation } from "../../features/navigation/NavigationContext";
 import "./Navbar.css";
 
 const navLinks = ["Intro", "Projects", "Skills", "Journey"];
 
+// The fonts the links are measured with; the navbar waits until the browser
+// has finished loading them, so it does not resize right after appearing
+const NAV_FONTS = ['1rem "main-normal"', 'bold 1rem "main-bold"'];
+
 export default function Navbar() {
     const [hidden, setHidden] = useState(false);
-    const [isCompactLayout, setIsCompactLayout] = useState(false);
     const [activeSection, setActiveSection] = useState("Intro");
+    const [fontsReady, setFontsReady] = useState(false);
     const { handleIntro } = useNavigation();
 
-    const underlineRef = useRef(null);
-    const linksRef = useRef([]);
-    const lastScrollRef = useRef(0);
-
     useEffect(() => {
-        const checkLayout = () => {
-            setIsCompactLayout(window.innerWidth <= 1024);
-        };
+        if (!document.fonts?.load) {
+            setFontsReady(true);
+            return;
+        }
 
-        checkLayout();
-        window.addEventListener("resize", checkLayout);
-        return () => window.removeEventListener("resize", checkLayout);
+        let isCancelled = false;
+
+        // Settles once every font has either loaded or failed, so the navbar
+        // still shows (in the fallback font) if a font cannot be fetched
+        Promise.allSettled(
+            NAV_FONTS.map((font) => document.fonts.load(font))
+        ).then(() => {
+            if (!isCancelled) setFontsReady(true);
+        });
+
+        return () => {
+            isCancelled = true;
+        };
     }, []);
 
     useEffect(() => {
@@ -34,96 +45,42 @@ export default function Navbar() {
             const maxScroll = docHeight - viewportHeight;
             const current = Math.max(0, Math.min(rawScroll, maxScroll));
 
-            const last = lastScrollRef.current;
-
-            const isScrollingDown = current > last;
-            const isNearTop = current < 60;
             const isAtBottom = maxScroll - current <= 2;
 
-            if (isAtBottom) {
-                setHidden(true);
-            } else if (isScrollingDown && !isNearTop) {
-                setHidden(true);
-            } else {
-                setHidden(false);
-            }
-            lastScrollRef.current = current;
+            setHidden(isAtBottom);
         };
 
         window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
-    const moveUnderline = useCallback((linkEl) => {
-        const underline = underlineRef.current;
-        if (!underline || !linkEl) return;
 
-        const container = linkEl.offsetParent;
-        if (!container) return;
-        const width = linkEl.offsetWidth;
-        const offsetX = linkEl.offsetLeft;
-
-        underline.style.width = `${width}px`;
-        underline.style.transform = `translateX(${offsetX}px)`;
-        underline.style.opacity = 1;
-    }, []);
-
-    const handleNavMouseLeave = useCallback(() => {
-        if (isCompactLayout) return;
-        const underline = underlineRef.current;
-        if (underline) underline.style.opacity = 0;
-    }, [isCompactLayout]);
-
+    // Highlight the section that sits under the middle of the screen
     useEffect(() => {
-        if (!isCompactLayout) return;
-
         const handleScrollSpy = () => {
-            const viewportHeight = window.innerHeight;
-            let bestId = activeSection;
-            let bestRatio = 0;
+            const middle = window.innerHeight / 2;
 
-            navLinks.forEach((id) => {
+            const current = navLinks.find((id) => {
                 const section = document.getElementById(id);
-                if (!section) return;
+                if (!section) return false;
 
                 const rect = section.getBoundingClientRect();
-
-                const visibleHeight =
-                    Math.min(rect.bottom, viewportHeight) -
-                    Math.max(rect.top, 0);
-
-                const ratio =
-                    visibleHeight > 0 ? visibleHeight / viewportHeight : 0;
-
-                if (ratio > bestRatio) {
-                    bestRatio = ratio;
-                    bestId = id;
-                }
+                return rect.top <= middle && rect.bottom > middle;
             });
 
-            if (bestRatio >= 0.7 && bestId !== activeSection) {
-                setActiveSection(bestId);
-            }
+            setActiveSection(current ?? null);
         };
 
-        window.addEventListener("scroll", handleScrollSpy);
+        window.addEventListener("scroll", handleScrollSpy, { passive: true });
+        window.addEventListener("resize", handleScrollSpy);
         handleScrollSpy();
 
-        return () => window.removeEventListener("scroll", handleScrollSpy);
-    }, [isCompactLayout, activeSection]);
+        return () => {
+            window.removeEventListener("scroll", handleScrollSpy);
+            window.removeEventListener("resize", handleScrollSpy);
+        };
+    }, []);
 
-    useEffect(() => {
-        if (!isCompactLayout) return;
-
-        const index = navLinks.indexOf(activeSection);
-        if (index === -1) return;
-
-        const linkEl = linksRef.current[index];
-        if (linkEl) {
-            moveUnderline(linkEl);
-        }
-    }, [activeSection, isCompactLayout, moveUnderline]);
-
-    const handleLinkClick = (e, label, index) => {
+    const handleLinkClick = (e, label) => {
         e.preventDefault();
 
         const target = document.querySelector(`#${label}`);
@@ -137,18 +94,13 @@ export default function Navbar() {
         if (label === "Intro" && handleIntro) {
             handleIntro();
         }
-
-        if (isCompactLayout) {
-            setActiveSection(label);
-            const linkEl = linksRef.current[index];
-            if (linkEl) moveUnderline(linkEl);
-        }
     };
+
+    if (!fontsReady) return null;
 
     return (
         <nav className={`nav-container${hidden ? " nav-hidden" : ""}`}>
-            <div className="nav-inner" onMouseLeave={handleNavMouseLeave}>
-                <span className="hover-underline" ref={underlineRef}></span>
+            <div className="nav-inner">
                 {navLinks.map((label, i) => (
                     <a
                         draggable="false"
@@ -156,19 +108,13 @@ export default function Navbar() {
                         href={`#${label}`}
                         className={`nav-link disable-select ${
                             hidden ? "" : "fade-in-link"
-                        } ${
-                            isCompactLayout && activeSection === label
-                                ? "is-active"
-                                : ""
-                        }`}
-                        style={{ animationDelay: `${i * 0.12}s` }}
-                        ref={(el) => (linksRef.current[i] = el)}
-                        onMouseEnter={
-                            !isCompactLayout
-                                ? (e) => moveUnderline(e.currentTarget)
-                                : undefined
+                        } ${activeSection === label ? "is-active" : ""}`}
+                        data-label={label}
+                        aria-current={
+                            activeSection === label ? "location" : undefined
                         }
-                        onClick={(e) => handleLinkClick(e, label, i)}
+                        style={{ animationDelay: `${i * 0.12}s` }}
+                        onClick={(e) => handleLinkClick(e, label)}
                     >
                         {label}
                     </a>

@@ -10,7 +10,30 @@
     border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow: 0 4px 28px rgba(0, 0, 0, 0.25);
     animation: navbarExpand 0.35s ease forwards;
-    z-index: 1;
+    z-index: var(--z-navbar);
+    --nav-shine: linear-gradient(
+        90deg,
+        #0060ff,
+        #00a2ff,
+        #00bfa5,
+        #00a2ff,
+        #0060ff
+    );
+    --nav-glow: rgba(0, 96, 255, 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+    .nav-container {
+        --nav-shine: linear-gradient(
+            90deg,
+            hsl(217, 100%, 70%),
+            #00eaff,
+            #00ffd5,
+            #00eaff,
+            hsl(217, 100%, 70%)
+        );
+        --nav-glow: rgba(0, 234, 255, 0.55);
+    }
 }
 
 .nav-container.nav-hidden {
@@ -53,46 +76,79 @@
     gap: 1rem;
 }
 
-.hover-underline {
-    position: absolute;
-    bottom: -3px;
-    height: 3px;
-    width: 0;
-    opacity: 0;
-    border-radius: 20px;
-    pointer-events: none;
-    background: linear-gradient(
-        90deg,
-        hsl(217, 100%, 50%),
-        #00eaff,
-        #00ffd5,
-        #00eaff,
-        hsl(217, 100%, 50%)
-    );
-    background-size: 300% 100%;
-    animation: flowing 8s linear infinite;
-    transition: all 0.28s ease;
-}
-
-@keyframes flowing {
-    0% {
-        background-position: 0% 0;
-    }
-    50% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: 0% 0; /* same as 0% → no snap */
-    }
-}
-
 .nav-link {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
     padding: 0.25rem;
     text-decoration: none;
     font-weight: 500;
     font-size: 1.25rem;
     position: relative;
     text-shadow: 0.05rem 0.05rem 0.01rem #fff;
+    transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+/* Invisible bold copy that reserves the bold width, so the navbar does not
+   jump when a link becomes active */
+.nav-link::after {
+    content: attr(data-label);
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    font-family: "main-bold";
+    font-weight: bold;
+    pointer-events: none;
+}
+
+/* Bold, shiny copy of the label laid over the link. It is always there and
+   only fades in and out, so becoming (in)active is a smooth cross-fade. */
+.nav-link::before {
+    content: attr(data-label);
+    content: attr(data-label) / "";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "main-bold";
+    font-weight: bold;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: var(--nav-shine);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 0.45rem var(--nav-glow));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    animation: navShine 5s linear infinite reverse;
+}
+
+/* The section the user is currently in: the plain label fades out while the
+   shiny one fades in */
+.nav-link.is-active {
+    color: transparent;
+    text-shadow: none;
+}
+
+.nav-link.is-active::before {
+    opacity: 1;
+}
+
+/* 150% moves the 300%-wide gradient by exactly one full width: a seamless loop */
+@keyframes navShine {
+    to {
+        background-position: 150% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-link::before {
+        animation: none;
+    }
 }
 
 @media (max-width: 640px), (max-height: 640px) {

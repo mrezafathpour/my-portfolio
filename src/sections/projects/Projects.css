@@ -1,167 +1,738 @@
-.projects-grid {
-    display: grid;
-    gap: 30px;
-    grid-template-columns: repeat(2, 1fr);
+.Projects .section-header {
+    margin-bottom: 2rem;
 }
 
-.project-card {
-    display: grid;
-    grid-template-rows: max-content auto 1rem;
-    border-radius: 20px;
-    padding: 1.5rem;
-    backdrop-filter: blur(12px);
-    transition: 0.3s ease;
-    box-shadow: 0 8px 26px hsla(222, 47%, 11%, 0.1);
+/* ---------- Carousel ---------- */
+
+.pc {
+    /* Slide width as a fraction of the stage */
+    --pc-size: 0.56;
+    --pc-shrink: 0.2;
+    /* Shift that lands a side slide's outer edge exactly on the stage edge,
+       so it is never clipped and keeps its rounded corners */
+    --pc-shift: calc(
+        (0.5 / var(--pc-size) - (1 - var(--pc-shrink)) / 2) * 100%
+    );
+    --pc-surface: rgba(255, 255, 255, 0.6);
+    --pc-border: rgba(15, 23, 42, 0.1);
 }
 
-.project-image-wrapper {
-    width: 100%;
-    height: fit-content;
-    background: #fff;
-    position: relative;
-    border-radius: 14px;
+.pc-stage {
+    display: grid;
     overflow: hidden;
+    /* Keeps the slides' z-indexes inside the carousel, below the navbar */
+    isolation: isolate;
+    padding: 2rem 0 3.5rem;
+    touch-action: pan-y;
 }
 
-.project-image {
+.pc-slide {
+    grid-area: 1 / 1;
+    justify-self: center;
+    position: relative;
+    width: calc(var(--pc-size) * 100%);
+    aspect-ratio: 16 / 9;
+    padding: 0;
+    border: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #fff;
+    cursor: pointer;
+    z-index: calc(10 - var(--distance));
+    transform: translateX(calc(var(--offset) * var(--pc-shift)))
+        scale(calc(1 - var(--distance) * var(--pc-shrink)));
+    opacity: 0.55;
+    box-shadow: 0 8px 20px -8px hsla(222, 47%, 11%, 0.2);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.6s ease, box-shadow 0.6s ease;
+}
+
+.pc-slide.is-active {
+    opacity: 1;
+    cursor: zoom-in;
+    box-shadow: 0 14px 32px -12px hsla(222, 47%, 11%, 0.3);
+}
+
+.pc-slide.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pc-slide:focus-visible,
+.pc-arrow:focus-visible,
+.pc-dot:focus-visible {
+    outline: 3px solid #0060ff;
+    outline-offset: 3px;
+}
+
+.pc-slide img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pc-slide-badge {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 0.875rem;
+    color: #fff;
+    background: rgba(15, 23, 42, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     opacity: 0;
+    transform: translateY(0.5rem);
+    transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
 }
 
-.project-image.shown {
+.pc-slide.is-active .pc-slide-badge {
     opacity: 1;
+    transform: translateY(0);
 }
 
-.project-image.fade-out {
-    animation: imageFadeOut 0.3s ease forwards;
-}
-
-.project-image.fade-in {
-    animation: imageFadeIn 0.3s ease forwards;
-}
-
-@keyframes imageFadeOut {
-    0% {
-        opacity: 1;
-        transform: scale(1);
-        filter: blur(0);
-    }
-    100% {
-        opacity: 0;
-        transform: scale(0.97);
-        filter: blur(0.5rem);
-    }
-}
-
-@keyframes imageFadeIn {
-    0% {
-        opacity: 0;
+@media (hover: hover) {
+    .pc-slide.is-active:hover img {
         transform: scale(1.03);
-        filter: blur(0.5rem);
     }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-        filter: blur(0);
+
+    .pc-slide.is-active:hover .pc-slide-badge {
+        background: #0060ff;
+    }
+
+    .pc-slide:not(.is-active):hover {
+        opacity: 0.8;
     }
 }
 
-.project-title {
-    font-size: 1.5rem;
-    margin: 1.5rem 0 1rem 0;
+.pc-info {
+    display: grid;
+    max-width: 46rem;
+    margin: 0 auto;
+    text-align: center;
 }
 
-.project-desc {
+.pc-info-item {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.75rem);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s 0.3s;
+}
+
+.pc-info-item.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.45s ease 0.15s, transform 0.45s ease 0.15s;
+}
+
+.pc-count {
+    font-size: 0.875rem;
+    letter-spacing: 0.15em;
+    opacity: 0.6;
+}
+
+.pc-title {
+    font-size: 2rem;
+    margin: 0.5rem 0 0.75rem;
+}
+
+.pc-desc {
     opacity: 0.75;
     font-size: 1.25rem;
     line-height: 1.75rem;
-    margin: 0 0 1.5rem 0;
+    margin: 0;
 }
 
-.dots {
+.pc-controls {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    margin-top: 2rem;
+}
+
+.pc-arrow {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--pc-border);
+    border-radius: 50%;
+    font-size: 1.25rem;
+    color: inherit;
+    background: var(--pc-surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.pc-arrow:active {
+    transform: scale(0.92);
+}
+
+.pc-dots {
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
 }
 
-.dot {
+.pc-dot {
     width: 0.625rem;
     height: 0.625rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
     background: #777;
-    border-radius: 50%;
-    transition: background 0.25s ease, transform 0.25s ease;
     cursor: pointer;
+    transition: width 0.35s ease, background 0.35s ease;
 }
 
-.dot.active {
+.pc-dot.is-active {
+    background:  var(--primary-light-mode);
+}
+
+/* ---------- Gallery ---------- */
+
+.pg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    /* Same side gutters as .wrapper, capped so the popup keeps its room */
+    --pg-gutter: 1rem;
+    color: #fff;
+    background: rgba(10, 12, 20, 0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.pg:focus {
+    outline: none;
+}
+
+/* Every exit below is the exact mirror of its entrance: same keyframes and
+   duration played backwards, with the easing curve and the order reversed.
+   A curve (x1, y1, x2, y2) mirrors to (1 - x2, 1 - y2, 1 - x1, 1 - y1). */
+.pg[open] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    /* Header, footer and backdrop fade in while the photos start arriving */
+    animation: pgFadeIn 0.3s ease;
+}
+
+/* ...and fade out last, once the photos have left: the photos take
+   0.45s + 70ms per extra photo, and this fade fills the final 0.3s */
+.pg.is-closing {
+    pointer-events: none;
+    animation: pgFadeOut 0.3s cubic-bezier(0.75, 0, 0.75, 0.9) forwards;
+    animation-delay: calc((var(--pg-count) - 1) * 70ms + 150ms);
+}
+
+/* Closing from the full-size view: only the 0.35s image exit comes first */
+.pg.is-viewing.is-closing {
+    animation-delay: 50ms;
+}
+
+/* Coming back from a full-size photo, the wall is simply there again */
+.pg.has-viewed .pg-tile {
+    animation: none;
+}
+
+.pg.is-closing .pg-tile {
+    animation: pgTileOut 0.45s cubic-bezier(0.64, 0, 0.78, 0) forwards;
+    animation-delay: calc((var(--pg-count) - 1 - var(--i)) * 70ms);
+}
+
+.pg.is-leaving .pg-image,
+.pg.is-closing .pg-image {
+    animation: pgImageOut 0.35s cubic-bezier(0.75, 0, 0.75, 0.9) forwards;
+}
+
+.pg.is-leaving .pg-arrow,
+.pg.is-leaving .pg-thumbs {
+    pointer-events: none;
+    animation: pgFadeOut 0.35s cubic-bezier(0.75, 0, 0.75, 0.9) forwards;
+}
+
+/* Persistent lights: parked invisible on the page, shown inside the popup */
+.pg-lights {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: var(--z-background);
+    visibility: hidden;
+}
+
+.pg .pg-lights {
+    visibility: visible;
+    animation: pgFadeIn 1s ease;
+}
+
+.pg::backdrop {
+    background: transparent;
+}
+
+@keyframes pgFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pgFadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes pgTileOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(1rem) scale(0.96);
+    }
+}
+
+@keyframes pgImageOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+}
+
+@keyframes pgTileIn {
+    from {
+        opacity: 0;
+        transform: translateY(1rem) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes pgImageIn {
+    from {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.pg-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.pg-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.pg-title {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.pg-count {
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+    white-space: nowrap;
+}
+
+.pg-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.pg-btn {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+    font-size: 1.25rem;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.pg-btn:hover {
     background: #0060ff;
 }
 
-@media (max-width: 1024px) {
-    .project-card {
-        padding: 0 0 20px 0;
-    }
-    .project-image-wrapper {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-    }
-    .project-card .description,
-    .dots {
-        padding: 0 1rem;
-    }
+.pg-btn:focus-visible,
+.pg-tile:focus-visible,
+.pg-thumb:focus-visible {
+    outline: 3px solid #00ffd5;
+    outline-offset: 2px;
+}
 
-    .projects-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1rem;
+/* Photo wall: 12 columns, tiles pick their own span and shape */
+.pg-wall {
+    display: flex;
+    min-height: 0;
+    padding: 0.5rem var(--pg-gutter);
+    overflow-y: auto;
+}
+
+.pg-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 68rem;
+    margin: auto;
+}
+
+.pg-tile {
+    position: relative;
+    padding: 0;
+    border: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    cursor: zoom-in;
+    animation: pgTileIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--i) * 70ms);
+}
+
+.pg-tile-wide {
+    grid-column: span 7;
+    aspect-ratio: 2 / 1;
+}
+
+.pg-tile-narrow {
+    grid-column: span 5;
+}
+
+.pg-tile-hero {
+    grid-column: span 8;
+    grid-row: span 2;
+}
+
+.pg-tile-small {
+    grid-column: span 4;
+    aspect-ratio: 16 / 9;
+}
+
+.pg-tile-full {
+    grid-column: span 12;
+    aspect-ratio: 16 / 9;
+}
+
+.pg-tile img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) {
+    .pg-tile:hover img {
+        transform: scale(1.05);
     }
 }
 
-@media (max-width: 1536px) {
-    .project-card {
-        padding: 0 0 2rem 0;
-    }
-    .project-image-wrapper {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-    }
-    .project-card .description,
-    .dots {
-        padding: 0 2rem;
+.pg-stage {
+    position: relative;
+    display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    place-items: center;
+    min-height: 0;
+    padding: 0 calc(var(--pg-gutter) + 4rem);
+    touch-action: pan-y;
+}
+
+.pg-image {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 12px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+    animation: pgImageIn 0.35s ease;
+}
+
+.pg-arrow {
+    position: absolute;
+    top: 50%;
+    margin-top: -1.375rem;
+    animation: pgFadeIn 0.35s ease;
+}
+
+.pg-arrow-prev {
+    left: var(--pg-gutter);
+}
+
+.pg-arrow-next {
+    right: var(--pg-gutter);
+}
+
+.pg-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem var(--pg-gutter) 1.5rem;
+}
+
+.pg-desc {
+    max-width: 46rem;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    text-align: center;
+    opacity: 0.75;
+}
+
+.pg-thumbs {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 100%;
+    padding: 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    animation: pgFadeIn 0.35s ease;
+}
+
+.pg-thumbs::-webkit-scrollbar {
+    display: none;
+}
+
+.pg-thumb {
+    flex-shrink: 0;
+    width: 6.5rem;
+    aspect-ratio: 16 / 9;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.pg-thumb:hover {
+    opacity: 0.85;
+}
+
+.pg-thumb.is-active {
+    opacity: 1;
+    border-color: #00ffd5;
+}
+
+.pg-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 768px) {
+    .pg {
+        --pg-gutter: 2rem;
     }
 }
 
-@media (max-width: 1024px) {
-    .project-card {
-        padding: 0 0 1rem 0;
-    }
-    .project-card .description,
-    .dots {
-        padding: 0 1rem;
-    }
-    .projects-grid {
-        grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-        gap: 1rem;
+@media (min-width: 1024px) {
+    .pg {
+        --pg-gutter: 4rem;
     }
 }
 
-@media (max-width: 768px) {
-    .project-title {
-        font-size: 1.25rem;
+@media (max-width: 1280px) {
+    .pc {
+        --pc-size: 0.62;
+    }
+}
+
+@media (max-width: 767px) {
+    /* The slide fills the content width so it lines up with other sections */
+    .pc {
+        --pc-size: 1;
+        --pc-shift: 106%;
+        --pc-shrink: 0.1;
     }
 
-    .project-desc {
+    .pc-stage {
+        padding: 1rem 0 2.5rem;
+    }
+
+    .pc-slide {
+        border-radius: 14px;
+    }
+
+    .pc-slide-badge {
+        right: 0.5rem;
+        bottom: 0.5rem;
+        padding: 0.375rem 0.625rem;
+        font-size: 0.75rem;
+    }
+
+    .pc-title {
+        font-size: 1.5rem;
+    }
+
+    .pc-desc {
         font-size: 1rem;
         line-height: 1.5rem;
     }
 
-    .projects-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    .pg-header {
+        padding: 0.75rem var(--pg-gutter);
+    }
+
+    .pg-title {
+        font-size: 1.25rem;
+    }
+
+    .pg-stage {
+        padding: 0 var(--pg-gutter);
+    }
+
+    .pg-grid {
+        gap: 0.5rem;
+    }
+
+    .pg-tile {
+        border-radius: 10px;
+    }
+
+    .pg-image {
+        border-radius: 8px;
+    }
+
+    .pg-arrow {
+        background: rgba(15, 23, 42, 0.6);
+    }
+
+    .pg-arrow-prev {
+        left: calc(var(--pg-gutter) + 0.5rem);
+    }
+
+    .pg-arrow-next {
+        right: calc(var(--pg-gutter) + 0.5rem);
+    }
+
+    .pg-footer {
+        padding: 1rem var(--pg-gutter);
+    }
+
+    .pg-desc {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+
+    .pg-thumb {
+        width: 4.5rem;
+    }
+}
+
+/* Short viewports (landscape phones): give the image all the room */
+@media (max-height: 520px) {
+    .pg-header {
+        padding: 0.5rem var(--pg-gutter);
+    }
+
+    .pg-stage {
+        padding: 0 calc(var(--pg-gutter) + 3.5rem);
+    }
+
+    .pg-footer {
+        padding: 0.5rem var(--pg-gutter);
+    }
+
+    .pg-desc,
+    .pg-thumbs {
+        display: none;
+    }
+
+    .pg-grid {
+        max-width: 34rem;
     }
 }
 
 @media (prefers-color-scheme: dark) {
-    .project-card {
-        background: rgba(255, 255, 255, 0.05);
+    .pc {
+        --pc-surface: rgba(255, 255, 255, 0.08);
+        --pc-border: rgba(255, 255, 255, 0.18);
+    }
+
+    .pc-slide img {
+        filter: brightness(0.85);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pc-slide,
+    .pc-slide img,
+    .pc-info-item,
+    .pc-info-item.is-active,
+    .pc-dot {
+        transition: none;
+    }
+
+    .pg[open],
+    .pg .pg-lights,
+    .pg-tile,
+    .pg-image,
+    .pg-arrow,
+    .pg-thumbs {
+        animation: none;
+    }
+
+    .pg-tile img {
+        transition: none;
     }
 }
