@@ -359,7 +359,14 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1rem;
+    /* As wide as the content below it (set from ProjectGallery), so the title
+       and the buttons sit exactly above its left and right edges */
+    box-sizing: border-box;
+    width: 100%;
+    max-width: var(--pg-content-width, calc(100% - 2 * var(--pg-gutter)));
+    margin: 0 auto;
+    padding: 1rem 0;
+    transition: max-width 0.35s ease;
 }
 
 .pg-heading {
@@ -630,7 +637,7 @@
     }
 
     .pg-header {
-        padding: 0.75rem var(--pg-gutter);
+        padding: 0.75rem 0;
     }
 
     .pg-title {
@@ -682,7 +689,7 @@
 /* Short viewports (landscape phones): give the image all the room */
 @media (max-height: 520px) {
     .pg-header {
-        padding: 0.5rem var(--pg-gutter);
+        padding: 0.5rem 0;
     }
 
     .pg-stage {

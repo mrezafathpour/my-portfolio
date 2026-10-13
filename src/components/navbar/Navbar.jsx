@@ -86,7 +86,7 @@ export default function Navbar() {
         const target = document.querySelector(`#${label}`);
         if (target) {
             window.scrollTo({
-                top: target.offsetTop - 80,
+                top: target.getBoundingClientRect().top + window.scrollY,
                 behavior: "smooth",
             });
         }

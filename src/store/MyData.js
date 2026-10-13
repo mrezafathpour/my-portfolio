@@ -1,3 +1,13 @@
+export const MyIntro = {
+    greeting: "Hey, I'm Mohammadreza!",
+    profession: "A Front-end Developer",
+    description: [
+        "As an innovative and creative developer, I am passionate about crafting exceptional digital experiences, leveraging my deep expertise in front-end development.",
+        "With a robust portfolio showcasing years of accomplishments, I have consistently delivered impactful projects that combine functionality & design.",
+        "I thrive on turning complex ideas into intuitive, engaging interfaces that leave a lasting impression.",
+    ],
+};
+
 export const MyJourney = [
     {
         date: "Sep 2019",
