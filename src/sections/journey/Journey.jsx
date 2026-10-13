@@ -51,7 +51,7 @@ export default function Journey() {
                                         zIndex: -1,
                                     }}
                                 >
-                                    <GlyphPlasmaBackground seed={index} />
+                                    {/* <GlyphPlasmaBackground seed={index} /> */}
                                 </div>
                                 <p className="timeline-date">{entry.date}</p>
                                 <h3 className="timeline-title">

@@ -1,6 +1,48 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+    SiCss,
+    SiGit,
+    SiHtml5,
+    SiJavascript,
+    SiJest,
+    SiMui,
+    SiNextdotjs,
+    SiPwa,
+    SiPython,
+    SiReact,
+    SiReactquery,
+    SiRedux,
+    SiSass,
+    SiTypescript,
+    SiWebpack,
+} from "react-icons/si";
+import { TbHierarchy2 } from "react-icons/tb";
 import { SKILLS } from "../../store/MyData";
 import "./Skills.css";
+
+// Logo and brand colour per skill name in MyData. Entries without a colour
+// (black logos, or no brand at all) take the text colour so they stay visible
+// in both light and dark mode, and the deep purples get a lighter shade for
+// dark mode (darkColor). An unlisted skill gets the generic icon.
+const SKILL_LOGOS = {
+    HTML: { Icon: SiHtml5, color: "#e34f26" },
+    CSS: { Icon: SiCss, color: "#663399", darkColor: "#a57fdb" },
+    JavaScript: { Icon: SiJavascript, color: "#f7df1e" },
+    TypeScript: { Icon: SiTypescript, color: "#3178c6" },
+    "React.": { Icon: SiReact, color: "#61dafb" },
+    "Next.js": { Icon: SiNextdotjs },
+    Git: { Icon: SiGit, color: "#f05032" },
+    "React Redux": { Icon: SiRedux, color: "#764abc", darkColor: "#a585e0" },
+    PWA: { Icon: SiPwa, color: "#5a0fc8", darkColor: "#a06bf5" },
+    "React Query": { Icon: SiReactquery, color: "#ff4154" },
+    OOP: { Icon: TbHierarchy2 },
+    "Material UI": { Icon: SiMui, color: "#007fff" },
+    "Jest.js": { Icon: SiJest, color: "#c21325" },
+    Webpack: { Icon: SiWebpack, color: "#8dd6f9" },
+    SASS: { Icon: SiSass, color: "#cc6699" },
+    Python: { Icon: SiPython, color: "#3776ab" },
+};
+const DEFAULT_LOGO = { Icon: TbHierarchy2 };
 
 const randomCubicBezier = () => {
     const x1 = Math.random();
@@ -150,13 +192,15 @@ const Skills = () => {
         <section className="skills-section" ref={skillsRef} id="Skills">
             <div className="section-header">
                 <h2>My Skills</h2>
-                <p>Latest update of my programming skills</p>
+                <p>Latest update of my programming skills (est)</p>
             </div>
             <div className="wrapper">
                 <div className="skills-container">
                     {SKILLS.map((skill) => {
                         const cfg = animConfig[skill.name] || {};
                         const currentValue = displayLevels[skill.name] ?? 0;
+                        const { Icon, color, darkColor } =
+                            SKILL_LOGOS[skill.name] || DEFAULT_LOGO;
 
                         return (
                             <div
@@ -171,31 +215,46 @@ const Skills = () => {
                                     handleSkillKeyDown(e, skill.name)
                                 }
                             >
-                                <div className="skill-header">
-                                    <span className="skill-name">
-                                        {skill.name}
-                                    </span>
-                                    <span className="skill-level">
-                                        {currentValue}%
-                                    </span>
-                                </div>
+                                <span
+                                    className="skill-logo"
+                                    style={{
+                                        "--skill-color": color,
+                                        "--skill-color-dark":
+                                            darkColor ?? color,
+                                    }}
+                                >
+                                    <Icon aria-hidden="true" />
+                                </span>
 
-                                <div className="skill-bar">
-                                    <div
-                                        key={replayCounts[skill.name] ?? 0}
-                                        className="skill-fill"
-                                        style={{
-                                            width: animatedSkills[skill.name]
-                                                ? `${skill.level}%`
-                                                : "0%",
-                                            transitionProperty: "width",
-                                            transitionDuration: `${
-                                                cfg.duration || 1.5
-                                            }s`,
-                                            transitionTimingFunction:
-                                                cfg.easing || "ease-out",
-                                        }}
-                                    />
+                                <div className="skill-body">
+                                    <div className="skill-header">
+                                        <span className="skill-name">
+                                            {skill.name}
+                                        </span>
+                                        <span className="skill-level">
+                                            {currentValue}%
+                                        </span>
+                                    </div>
+
+                                    <div className="skill-bar">
+                                        <div
+                                            key={replayCounts[skill.name] ?? 0}
+                                            className="skill-fill"
+                                            style={{
+                                                width: animatedSkills[
+                                                    skill.name
+                                                ]
+                                                    ? `${skill.level}%`
+                                                    : "0%",
+                                                transitionProperty: "width",
+                                                transitionDuration: `${
+                                                    cfg.duration || 1.5
+                                                }s`,
+                                                transitionTimingFunction:
+                                                    cfg.easing || "ease-out",
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         );

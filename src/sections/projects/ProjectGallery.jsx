@@ -99,6 +99,29 @@ export default function ProjectGallery({ project, onClose }) {
         };
     }, []);
 
+    // The header lines up with the left and right edges of what is shown under
+    // it: the photo wall, or the opened photo (whose size depends on the screen)
+    useLayoutEffect(() => {
+        const dialog = dialogRef.current;
+        const content = dialog?.querySelector(".pg-image, .pg-grid");
+        if (!content) return;
+
+        const update = () => {
+            // offsetWidth, not the bounding box: the photo scales up while
+            // it animates in, and the header should match its final size
+            const width = content.offsetWidth;
+            if (width) {
+                dialog.style.setProperty("--pg-content-width", `${width}px`);
+            }
+        };
+
+        const observer = new ResizeObserver(update);
+        observer.observe(content);
+        update();
+
+        return () => observer.disconnect();
+    }, [index]);
+
     // The clicked tile/button unmounts on view change; keep focus in the dialog
     useEffect(() => {
         dialogRef.current?.focus();
@@ -185,7 +208,6 @@ export default function ProjectGallery({ project, onClose }) {
                     </button>
                 </div>
             </header>
-
             {isViewing ? (
                 <div
                     className="pg-stage"

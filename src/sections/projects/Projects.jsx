@@ -33,7 +33,7 @@ export default function Projects() {
                     onOpen={openGallery}
                 />
             </div>
-            {createPortal(<GradientLights fadeDuration={0} />, lightsHost)}
+            {/* {createPortal(<GradientLights fadeDuration={0} />, lightsHost)} */}
             {galleryProject && (
                 <ProjectGallery
                     key={galleryProject.id}

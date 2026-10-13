@@ -1,13 +1,48 @@
+/* Fixed column counts that always divide the list evenly: four per row on
+   wide screens, two on laptops and tablets and one on phones. (auto-fit kept flipping between
+   4, 3 and 2 columns and left a lone item on the last row.) */
 .skills-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 3rem 5rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5rem 5rem;
 }
 
 .skill-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 0.875rem;
     cursor: pointer;
     border-radius: 8px;
     -webkit-tap-highlight-color: transparent;
+}
+
+/* The skill's logo on a small tile, like an app icon */
+.skill-logo {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    color: var(--skill-color, inherit);
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.14);
+    transition: transform 0.25s ease;
+}
+
+@media (hover: hover) {
+    .skill-item:hover .skill-logo {
+        transform: translateY(-2px) scale(1.06);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .skill-logo {
+        color: var(--skill-color-dark, inherit);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
 }
 
 .skill-item:focus-visible {
@@ -25,6 +60,9 @@
 .skill-name {
     font-weight: 600;
     font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .skill-level {
@@ -58,15 +96,11 @@
     box-shadow: 0 2px 8px rgba(79, 172, 254, 0.14) inset;
 }
 
-@media (max-width: 1536px) {
-    .skills-container {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
-}
-
+/* With the logo beside it, four columns leave too little room for the
+   longer names below this width, so two columns start here */
 @media (max-width: 1280px) {
     .skills-container {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 3rem 4rem;
     }
 }
@@ -89,7 +123,7 @@
     }
 
     .skills-container {
+        grid-template-columns: minmax(0, 1fr);
         gap: 3rem 1.5rem;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
 }
