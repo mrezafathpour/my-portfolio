@@ -4,6 +4,17 @@
     gap: 3rem 5rem;
 }
 
+.skill-item {
+    cursor: pointer;
+    border-radius: 8px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.skill-item:focus-visible {
+    outline: 3px solid #0060ff;
+    outline-offset: 6px;
+}
+
 .skill-header {
     display: flex;
     justify-content: space-between;

@@ -1,31 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { createPortal } from "react-dom";
 import { MyProjects } from "../../store/MyData";
-import ProjectCard from "./ProjectCard";
+import GradientLights from "../../components/GradientLights";
+import ProjectCarousel from "./ProjectCarousel";
+import ProjectGallery from "./ProjectGallery";
+import { getGalleryLightsHost } from "./galleryLights";
 import "./Projects.css";
 
-const getIsMobileDevice = () => {
-    if (typeof navigator === "undefined") return false;
-    const ua = navigator.userAgent || navigator.vendor || "";
-    const isMobile = /Mobi|Android|iPhone|iPod/i.test(ua);
-    const isTablet = /iPad|Tablet/i.test(ua);
-    return isMobile && !isTablet;
-};
-
 export default function Projects() {
-    const [isMobile, setIsMobile] = useState(false);
+    const [galleryProject, setGalleryProject] = useState(null);
+    const [lightsHost] = useState(getGalleryLightsHost);
 
-    useEffect(() => {
-        setIsMobile(getIsMobileDevice());
-    }, []);
-
-    useEffect(() => {
-        MyProjects.forEach((p) => {
-            p.images.forEach((src) => {
-                const img = new Image();
-                img.src = src;
-            });
-        });
-    }, []);
+    // A closing popup hands focus back to whatever had it when it opened.
+    // Keyboard users need that (and the slide's focus outline) to keep their
+    // place; for mouse and touch it only leaves a stray outline on the slide,
+    // so the slide lets go of focus up front and there is nothing to hand back.
+    const openGallery = (project, byKeyboard) => {
+        if (!byKeyboard) document.activeElement?.blur();
+        setGalleryProject(project);
+    };
 
     return (
         <section className="Projects" id="Projects">
@@ -34,16 +27,20 @@ export default function Projects() {
                 <p>Showcasing some of my accomplished projects</p>
             </div>
             <div className="wrapper">
-                <div className="projects-grid">
-                    {MyProjects.map((project) => (
-                        <ProjectCard
-                            key={project.id}
-                            project={project}
-                            isMobile={isMobile}
-                        />
-                    ))}
-                </div>
+                <ProjectCarousel
+                    projects={MyProjects}
+                    isGalleryOpen={galleryProject != null}
+                    onOpen={openGallery}
+                />
             </div>
+            {createPortal(<GradientLights fadeDuration={0} />, lightsHost)}
+            {galleryProject && (
+                <ProjectGallery
+                    key={galleryProject.id}
+                    project={galleryProject}
+                    onClose={() => setGalleryProject(null)}
+                />
+            )}
         </section>
     );
 }

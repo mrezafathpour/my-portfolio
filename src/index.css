@@ -12,6 +12,12 @@
     --text-dark-mode: #eeeef4;
     --primary-dark-mode: hsl(217, 100%, 80%);
     --secondary-dark-mode: #a1a8ae;
+
+    /* Stacking order, back to front. Popups are native <dialog>s shown in the
+       browser's top layer, so they sit above all of these without a z-index. */
+    --z-background: -1; /* fixed gradient lights */
+    --z-content: 0; /* sections; their own layers stay isolated inside them */
+    --z-navbar: 100;
 }
 
 @font-face {
@@ -66,10 +72,6 @@ body a {
 
     .nav-link {
         text-shadow: 0.05rem 0.05rem 0.01rem #000;
-    }
-
-    .project-image-wrapper {
-        filter: brightness(0.65) contrast(1.1);
     }
 }
 

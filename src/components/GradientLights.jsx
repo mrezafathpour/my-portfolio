@@ -98,6 +98,7 @@ function randomPosition(W, H, SIZE) {
 export default function GradientLights({
     count = 4 + Math.floor(Math.random() * 4),
     movementSpeed = 1,
+    fadeDuration = 2,
 }) {
     const containerRef = useRef(null);
     const lastSizeRef = useRef({
@@ -202,10 +203,11 @@ export default function GradientLights({
         <div
             ref={containerRef}
             style={{
-                position: "absolute",
+                position: "fixed",
                 inset: 0,
                 overflow: "hidden",
-                zIndex: -1,
+                pointerEvents: "none",
+                zIndex: "var(--z-background)",
             }}
         >
             {lights.map((light, i) => {
@@ -229,7 +231,7 @@ export default function GradientLights({
                             background: `radial-gradient(circle at center, ${colors[0]}, ${colors[1]})`,
                             transition: `transform ${
                                 9 / movementSpeed
-                            }s linear, opacity 2s ease`,
+                            }s linear, opacity ${fadeDuration}s ease`,
                             transform: `translate(${pos.x}px, ${pos.y}px)`,
                             WebkitUserSelect: "none",
                             MozUserSelect: "none",

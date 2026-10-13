@@ -1,0 +1,171 @@
+import { useState, useEffect } from "react";
+import { FiChevronLeft, FiChevronRight, FiMaximize2 } from "react-icons/fi";
+import useSwipe from "./useSwipe";
+import { prefersReducedMotion } from "./motion";
+
+const AUTOPLAY_MS = 5000;
+
+const getOffset = (i, active, count) => {
+    let offset = (((i - active) % count) + count) % count;
+    if (offset > count / 2) offset -= count;
+    return offset;
+};
+
+const pad = (n) => String(n).padStart(2, "0");
+
+export default function ProjectCarousel({ projects, isGalleryOpen, onOpen }) {
+    const [active, setActive] = useState(() =>
+        Math.floor(Math.random() * projects.length)
+    );
+    const [isPaused, setIsPaused] = useState(false);
+    const [autoplay, setAutoplay] = useState(() => !prefersReducedMotion());
+
+    const count = projects.length;
+
+    const goTo = (i) => {
+        setAutoplay(false);
+        setActive(((i % count) + count) % count);
+    };
+    const next = () => goTo(active + 1);
+    const prev = () => goTo(active - 1);
+
+    const swipeHandlers = useSwipe(prev, next);
+
+    useEffect(() => {
+        if (!autoplay || isPaused || isGalleryOpen || count < 2) return;
+
+        const timeout = setTimeout(() => {
+            setActive((current) => (current + 1) % count);
+        }, AUTOPLAY_MS);
+
+        return () => clearTimeout(timeout);
+    }, [active, autoplay, isPaused, isGalleryOpen, count]);
+
+    useEffect(() => {
+        projects[active].images.forEach((src) => {
+            const img = new Image();
+            img.src = src;
+        });
+    }, [projects, active]);
+
+    const handleKeyDown = (e) => {
+        if (e.key === "ArrowRight") next();
+        else if (e.key === "ArrowLeft") prev();
+    };
+
+    const handleSlideClick = (e, i) => {
+        if (i === active) {
+            setAutoplay(false);
+            // detail is 0 when the click came from the keyboard (Enter/Space)
+            onOpen(projects[i], e.detail === 0);
+        } else {
+            goTo(i);
+        }
+    };
+
+    return (
+        <div
+            className="pc"
+            role="group"
+            aria-roledescription="carousel"
+            aria-label="Projects"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onKeyDown={handleKeyDown}
+        >
+            <div className="pc-stage" {...swipeHandlers}>
+                {projects.map((project, i) => {
+                    const offset = getOffset(i, active, count);
+                    const distance = Math.abs(offset);
+                    const isActive = offset === 0;
+
+                    return (
+                        <button
+                            key={project.id}
+                            type="button"
+                            className={
+                                "pc-slide" +
+                                (isActive ? " is-active" : "") +
+                                (distance > 1 ? " is-hidden" : "")
+                            }
+                            style={{
+                                "--offset": offset,
+                                "--distance": distance,
+                            }}
+                            tabIndex={distance > 1 ? -1 : 0}
+                            aria-hidden={distance > 1}
+                            aria-label={
+                                isActive
+                                    ? `Open ${project.title} gallery`
+                                    : `Show ${project.title}`
+                            }
+                            onClick={(e) => handleSlideClick(e, i)}
+                        >
+                            <img
+                                src={project.images[0]}
+                                alt=""
+                                className="disable-select"
+                                draggable={false}
+                            />
+                            <span className="pc-slide-badge">
+                                <FiMaximize2 aria-hidden="true" />
+                                {project.images.length} shots
+                            </span>
+                        </button>
+                    );
+                })}
+            </div>
+
+            <div className="pc-info" aria-live={autoplay ? "off" : "polite"}>
+                {projects.map((project, i) => (
+                    <div
+                        key={project.id}
+                        className={
+                            "pc-info-item" + (i === active ? " is-active" : "")
+                        }
+                        aria-hidden={i !== active}
+                    >
+                        <span className="pc-count">
+                            {pad(i + 1)} / {pad(count)}
+                        </span>
+                        <h3 className="pc-title">{project.title}</h3>
+                        <p className="pc-desc">{project.description}</p>
+                    </div>
+                ))}
+            </div>
+
+            <div className="pc-controls">
+                <button
+                    type="button"
+                    className="pc-arrow"
+                    aria-label="Previous project"
+                    onClick={prev}
+                >
+                    <FiChevronLeft aria-hidden="true" />
+                </button>
+                <div className="pc-dots">
+                    {projects.map((project, i) => (
+                        <button
+                            key={project.id}
+                            type="button"
+                            className={
+                                "pc-dot" + (i === active ? " is-active" : "")
+                            }
+                            aria-label={`Show ${project.title}`}
+                            aria-current={i === active}
+                            onClick={() => goTo(i)}
+                        />
+                    ))}
+                </div>
+                <button
+                    type="button"
+                    className="pc-arrow"
+                    aria-label="Next project"
+                    onClick={next}
+                >
+                    <FiChevronRight aria-hidden="true" />
+                </button>
+            </div>
+        </div>
+    );
+}

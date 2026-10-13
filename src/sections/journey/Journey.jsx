@@ -41,6 +41,7 @@ export default function Journey() {
                                 style={{
                                     overflow: "hidden",
                                     position: "relative",
+                                    isolation: "isolate",
                                 }}
                             >
                                 <div
