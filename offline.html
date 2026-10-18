@@ -521,13 +521,29 @@
             var retry = document.getElementById("retry");
             var reloading = false;
 
+            // Shown over the running app (src/components/OfflineOverlay.jsx)
+            // instead of in place of a page that could not load
+            var isOverlay = window.parent !== window;
+
             var reconnect = function () {
                 if (reloading) return;
                 reloading = true;
 
                 document.body.classList.add("is-online");
-                statusText.textContent = "Back online, reloading…";
+                statusText.textContent = isOverlay
+                    ? "Back online"
+                    : "Back online, reloading…";
                 setTimeout(function () {
+                    // The app is still there underneath, it only has to
+                    // take this page away
+                    if (isOverlay) {
+                        window.parent.postMessage(
+                            "offline-page:online",
+                            location.origin
+                        );
+                        return;
+                    }
+
                     // Opened directly, this page would just reload itself
                     if (/offline\.html$/.test(location.pathname)) {
                         location.replace("./");
@@ -556,6 +572,14 @@
 
             retry.addEventListener("click", check);
             window.addEventListener("online", check);
+
+            // The connection may have come back while the app was in the
+            // background, with no "online" event once it is shown again
+            document.addEventListener("visibilitychange", function () {
+                if (document.visibilityState === "visible" && navigator.onLine) {
+                    check();
+                }
+            });
         </script>
     </body>
 </html>
