@@ -98,6 +98,13 @@
 
 /* With the logo beside it, four columns leave too little room for the
    longer names below this width, so two columns start here */
+
+@media (max-width: 1536px) {
+    .skills-container {
+        gap: 5rem 3rem;
+    }
+}
+
 @media (max-width: 1280px) {
     .skills-container {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -118,7 +125,8 @@
 }
 
 @media (max-width: 640px) {
-    .skill-name, .skill-level {
+    .skill-name,
+    .skill-level {
         font-size: 0.8rem;
     }
 

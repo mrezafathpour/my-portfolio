@@ -18,6 +18,10 @@ const MAX_REST_MS = 3000;
 // not send the lights off to new places
 const MIN_RESIZE_DELTA = 100;
 
+// Lights glow much stronger on the dark page, so there they are dimmed to
+// this share of their brightness
+const DARK_MODE_DIMMING = 0.5;
+
 function shuffle(items) {
     const result = [...items];
     for (let i = result.length - 1; i > 0; i--) {
@@ -50,7 +54,10 @@ function getLightSize({ w, h }) {
 function randomOpacity(size) {
     const min = size < 200 ? 0.5 : 0.25;
     const max = size < 200 ? 0.75 : 0.45;
-    return min + Math.random() * (max - min);
+    const opacity = min + Math.random() * (max - min);
+
+    const isDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+    return isDark ? opacity * DARK_MODE_DIMMING : opacity;
 }
 
 const randomPosition = (maxX, maxY) => ({
@@ -101,7 +108,7 @@ export default function GradientLights({
     const [viewport, setViewport] = useState(getViewport);
 
     // Decided once: a random default must not change from render to render
-    const [defaultCount] = useState(() => 4 + Math.floor(Math.random() * 4));
+    const [defaultCount] = useState(() => 6 + Math.floor(Math.random() * 4));
     const lightCount = count ?? defaultCount;
 
     const size = getLightSize(viewport);

@@ -1,15 +1,11 @@
 import { useState } from "react";
-import { createPortal } from "react-dom";
 import { MyProjects } from "../../store/MyData";
-import GradientLights from "../../components/GradientLights";
 import ProjectCarousel from "./ProjectCarousel";
 import ProjectGallery from "./ProjectGallery";
-import { getGalleryLightsHost } from "./galleryLights";
 import "./Projects.css";
 
 export default function Projects() {
     const [galleryProject, setGalleryProject] = useState(null);
-    const [lightsHost] = useState(getGalleryLightsHost);
 
     // A closing popup hands focus back to whatever had it when it opened.
     // Keyboard users need that (and the slide's focus outline) to keep their
@@ -33,7 +29,6 @@ export default function Projects() {
                     onOpen={openGallery}
                 />
             </div>
-            {/* {createPortal(<GradientLights fadeDuration={0} />, lightsHost)} */}
             {galleryProject && (
                 <ProjectGallery
                     key={galleryProject.id}

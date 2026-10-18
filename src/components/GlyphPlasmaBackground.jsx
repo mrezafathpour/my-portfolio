@@ -4,10 +4,12 @@ export function GlyphPlasmaBackground({
     className,
     seed = 0,
     glyphs = " .:;=+*#%@$&",
+    // Larger screens keep the mobile font-to-cell ratio (1.4), so the glyphs
+    // grow along with the card text instead of thinning out
     sizes = {
         base: { cellSize: 10, fontSize: 14 },
-        tablet: { cellSize: 11, fontSize: 15 },
-        desktop: { cellSize: 13, fontSize: 15 },
+        tablet: { cellSize: 12, fontSize: 17 },
+        desktop: { cellSize: 14, fontSize: 20 },
     },
     breakpoints = { mobile: 640, tablet: 1024 },
 

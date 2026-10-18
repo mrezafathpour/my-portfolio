@@ -110,6 +110,20 @@
     }
 }
 
+/* The greeting and profession always stay on one line each: below this width
+   their size follows the screen width. The greeting is about 11 times its
+   font size wide (11.6 leaves some room), and 2rem is the wrapper's gutters */
+@media (max-width: 640px) {
+    .intro-section h1 .sentence {
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        font-size: min(2rem, calc((100vw - 2rem) / 11.6));
+    }
+    .intro-section h1 .profession {
+        font-size: min(1.75rem, calc((100vw - 2rem) / 13.25));
+    }
+}
+
 @media (max-height: 640px) {
     .intro-section .wrapper {
         margin: 2rem auto;

@@ -1,5 +1,5 @@
 export const MyIntro = {
-    greeting: "Hey, I'm Mohammadreza!",
+    greeting: "Hey, I'm Mohammadreza",
     profession: "A Front-end Developer",
     description: [
         "As an innovative and creative developer, I am passionate about crafting exceptional digital experiences, leveraging my deep expertise in front-end development.",
