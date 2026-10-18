@@ -4,7 +4,7 @@
 // Paths are relative to this file, so it works under /my-portfolio/ too.
 
 // Bump the version whenever offline.html changes, so the new one is cached
-const CACHE = "offline-v2";
+const CACHE = "offline-v3";
 const OFFLINE_URL = "offline.html";
 const PRECACHE = [OFFLINE_URL, "favicon.svg"];
 
