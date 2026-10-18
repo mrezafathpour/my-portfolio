@@ -27,6 +27,7 @@
     --z-background: -1; /* fixed gradient lights */
     --z-content: 0; /* sections; their own layers stay isolated inside them */
     --z-navbar: 100;
+    --z-offline: 200; /* offline page shown over the whole app */
 }
 
 @font-face {

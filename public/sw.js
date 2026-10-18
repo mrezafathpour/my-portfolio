@@ -4,7 +4,7 @@
 // Paths are relative to this file, so it works under /my-portfolio/ too.
 
 // Bump the version whenever offline.html changes, so the new one is cached
-const CACHE = "offline-v1";
+const CACHE = "offline-v2";
 const OFFLINE_URL = "offline.html";
 const PRECACHE = [OFFLINE_URL, "favicon.svg"];
 
@@ -32,9 +32,11 @@ self.addEventListener("activate", (event) => {
                     .map((key) => caches.delete(key))
             );
 
-            // Lets page loads start while the service worker is still waking up
+            // Preloads go through the browser's HTTP cache, which would serve
+            // a recently visited page offline instead of offline.html; turned
+            // off here as the first version of this file had turned them on
             if (self.registration.navigationPreload) {
-                await self.registration.navigationPreload.enable();
+                await self.registration.navigationPreload.disable();
             }
 
             await self.clients.claim();
@@ -49,10 +51,15 @@ self.addEventListener("fetch", (event) => {
         event.respondWith(
             (async () => {
                 try {
-                    const preloaded = await event.preloadResponse;
-                    if (preloaded) return preloaded;
-
-                    return await fetch(request);
+                    // GitHub Pages lets browsers reuse a page for 10 minutes
+                    // without asking; "no-cache" always checks with the
+                    // server (cheap when unchanged), so going offline is
+                    // noticed at once. Redirects are left to the browser.
+                    return await fetch(request.url, {
+                        cache: "no-cache",
+                        credentials: "same-origin",
+                        redirect: "manual",
+                    });
                 } catch {
                     const cache = await caches.open(CACHE);
                     return cache.match(OFFLINE_URL);
