@@ -13,26 +13,22 @@
     z-index: var(--z-navbar);
     --nav-shine: linear-gradient(
         90deg,
-        #0060ff,
-        #00a2ff,
-        #00bfa5,
-        #00a2ff,
-        #0060ff
+        var(--accent),
+        var(--accent-light),
+        var(--accent)
     );
-    --nav-glow: rgba(0, 96, 255, 0.45);
+    --nav-glow: color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
 @media (prefers-color-scheme: dark) {
     .nav-container {
         --nav-shine: linear-gradient(
             90deg,
-            hsl(217, 100%, 70%),
-            #00eaff,
-            #00ffd5,
-            #00eaff,
-            hsl(217, 100%, 70%)
+            var(--accent-light),
+            var(--accent),
+            var(--accent-light)
         );
-        --nav-glow: rgba(0, 234, 255, 0.55);
+        --nav-glow: color-mix(in srgb, var(--accent-light) 55%, transparent);
     }
 }
 

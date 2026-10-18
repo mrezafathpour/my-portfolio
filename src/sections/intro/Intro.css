@@ -41,13 +41,12 @@
     font-size: 4rem;
     font-family: "main-bold";
     letter-spacing: 0.1rem;
-    color: hsl(240, 20%, 50%);
+    color: var(--accent-text);
     text-shadow: 0.05rem 0.05rem 0.1rem #fff;
 }
 
 @media (prefers-color-scheme: dark) {
     .intro-section .profession {
-        color: hsl(240, 20%, 60%);
         text-shadow: 0.05rem 0.05rem 0.1rem #000;
     }
 }

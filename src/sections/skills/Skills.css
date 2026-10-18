@@ -46,7 +46,7 @@
 }
 
 .skill-item:focus-visible {
-    outline: 3px solid #0060ff;
+    outline: 3px solid var(--accent);
     outline-offset: 6px;
 }
 
@@ -90,10 +90,11 @@
 .skill-fill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(to right, #00ffd5 0%, #0060ff 100%);
+    background: linear-gradient(to right, var(--accent-light), var(--accent));
     border-radius: 999px;
     transition: width 2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    box-shadow: 0 2px 8px rgba(79, 172, 254, 0.14) inset;
+    box-shadow: 0 2px 8px
+        color-mix(in srgb, var(--accent-light) 14%, transparent) inset;
 }
 
 /* With the logo beside it, four columns leave too little room for the

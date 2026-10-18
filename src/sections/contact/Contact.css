@@ -24,6 +24,7 @@
 .contact-icon:hover {
     opacity: 1;
     transform: scale(1.14);
+    color: var(--accent-text);
 }
 
 .contact-icon svg {
@@ -33,10 +34,17 @@
 
 .footer-note {
     line-height: 1.5rem;
-    font-size: 0.75rem;
+    font-size: 1.25rem;
     opacity: 0.85;
     letter-spacing: 0.05em;
     margin-top: 1.5rem;
+}
+
+@media (max-width: 767px) {
+    .footer-note {
+        font-size: 0.75rem;
+        line-height: 1.25rem;
+    }
 }
 
 @media (max-width: 640px) {

@@ -61,7 +61,7 @@
 .pc-slide:focus-visible,
 .pc-arrow:focus-visible,
 .pc-dot:focus-visible {
-    outline: 3px solid #0060ff;
+    outline: 3px solid var(--accent);
     outline-offset: 3px;
 }
 
@@ -104,7 +104,7 @@
     }
 
     .pc-slide.is-active:hover .pc-slide-badge {
-        background: #0060ff;
+        background: var(--accent);
     }
 
     .pc-slide:not(.is-active):hover {
@@ -362,7 +362,7 @@
     box-sizing: border-box;
     width: 100%;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 1rem;
 }
 
 .pg-heading {
@@ -406,13 +406,13 @@
 }
 
 .pg-btn:hover {
-    background: #0060ff;
+    background: var(--accent);
 }
 
 .pg-btn:focus-visible,
 .pg-tile:focus-visible,
 .pg-thumb:focus-visible {
-    outline: 3px solid #00ffd5;
+    outline: 3px solid var(--accent-light);
     outline-offset: 2px;
 }
 
@@ -570,7 +570,7 @@
 
 .pg-thumb.is-active {
     opacity: 1;
-    border-color: #00ffd5;
+    border-color: var(--accent-light);
 }
 
 .pg-thumb img {
@@ -610,7 +610,7 @@
     /* Runs past the wrapper's 1rem gutters, out to the screen edges */
     .pc-stage {
         margin: 0 -1rem;
-        padding: 1rem 0 2.5rem;
+        padding: 1rem 0 1rem;
     }
 
     .pc-slide {
