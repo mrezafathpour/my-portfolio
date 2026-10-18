@@ -50,17 +50,17 @@
                 box-sizing: border-box;
             }
 
-            html,
-            body {
-                height: 100%;
-            }
-
+            /* At least the screen's height, so the content is centred, but
+               free to grow and scroll when it does not fit (a phone turned
+               sideways) */
             body {
                 margin: 0;
+                min-height: 100vh;
+                min-height: 100dvh;
                 display: grid;
                 place-items: center;
                 padding: 2rem 1rem;
-                overflow: hidden;
+                overflow-x: hidden;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
                     Roboto, "Helvetica Neue", sans-serif;
                 -webkit-font-smoothing: antialiased;
@@ -139,20 +139,27 @@
                keeps breaking them apart and pulling them back ---------- */
 
             .logo-wrap {
-                position: relative;
+                --logo-size: 8rem;
                 display: grid;
                 place-items: center;
-                width: 11rem;
-                height: 11rem;
+                width: calc(var(--logo-size) * 1.375);
+                height: calc(var(--logo-size) * 1.375);
                 margin-bottom: 0.5rem;
             }
 
-            /* Ripples searching for a connection */
+            /* The logo and its ripples share one grid cell, centred */
+            .logo-wrap > * {
+                grid-area: 1 / 1;
+            }
+
+            /* Ripples searching for a connection: the tile's own outline,
+               corners included (favicon.svg rounds them by 3 of its 16
+               units), growing outwards */
             .ripple {
-                position: absolute;
-                inset: 1.5rem;
+                width: var(--logo-size);
+                height: var(--logo-size);
                 border: 2px solid var(--accent);
-                border-radius: 32%;
+                border-radius: calc(3 / 16 * 100%);
                 opacity: 0;
                 animation: ripple 3s ease-out infinite;
                 animation-delay: 1.6s;
@@ -179,8 +186,8 @@
 
             .logo {
                 position: relative;
-                width: 8rem;
-                height: 8rem;
+                width: var(--logo-size);
+                height: var(--logo-size);
                 overflow: visible;
                 animation: tile-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
             }
@@ -383,6 +390,10 @@
                 height: 1.1em;
             }
 
+            .is-checking button {
+                cursor: progress;
+            }
+
             .is-checking button svg {
                 animation: spin 0.8s linear infinite;
             }
@@ -390,6 +401,51 @@
             @keyframes spin {
                 to {
                     transform: rotate(360deg);
+                }
+            }
+
+            /* Tried again, still no connection */
+            .is-failed .status {
+                animation: shake 0.45s ease;
+            }
+
+            @keyframes shake {
+                20%,
+                60% {
+                    transform: translateX(-6px);
+                }
+                40%,
+                80% {
+                    transform: translateX(6px);
+                }
+            }
+
+            /* Short screens (a phone turned sideways): everything tighter,
+               so most of it fits without scrolling */
+            @media (max-height: 560px) {
+                body {
+                    padding: 1.25rem 1rem;
+                }
+
+                main {
+                    gap: 0.75rem;
+                }
+
+                .logo-wrap {
+                    --logo-size: 4.5rem;
+                    margin-bottom: 0;
+                }
+
+                h1 {
+                    font-size: 1.5rem;
+                }
+
+                .message {
+                    font-size: 0.9375rem;
+                }
+
+                button {
+                    margin-top: 0;
                 }
             }
 
@@ -555,18 +611,51 @@
 
             // A real request, since navigator.onLine can claim a connection
             // that does not actually reach the site
-            var check = function () {
-                document.body.classList.add("is-checking");
+            var checking = false;
 
-                return fetch(location.href, { cache: "no-store" })
+            // Offline, the request fails at once; the spinner still turns
+            // this long, so the tap visibly did something
+            var MIN_CHECK_MS = 900;
+
+            var check = function () {
+                if (checking || reloading) return;
+                checking = true;
+
+                var body = document.body;
+                body.classList.remove("is-failed");
+                body.classList.add("is-checking");
+                statusText.textContent = "Checking…";
+
+                var startedAt = Date.now();
+
+                var settle = function (isOnline) {
+                    var wait = Math.max(
+                        0,
+                        MIN_CHECK_MS - (Date.now() - startedAt)
+                    );
+
+                    setTimeout(function () {
+                        checking = false;
+                        body.classList.remove("is-checking");
+
+                        if (isOnline) {
+                            reconnect();
+                            return;
+                        }
+
+                        statusText.textContent = "Still offline";
+                        // Restarts the shake even on taps in quick succession
+                        void body.offsetWidth;
+                        body.classList.add("is-failed");
+                    }, wait);
+                };
+
+                fetch(location.href, { cache: "no-store" })
                     .then(function (response) {
-                        if (response.ok) reconnect();
+                        settle(response.ok);
                     })
-                    .catch(function () {})
-                    .then(function () {
-                        setTimeout(function () {
-                            document.body.classList.remove("is-checking");
-                        }, 600);
+                    .catch(function () {
+                        settle(false);
                     });
             };
 
