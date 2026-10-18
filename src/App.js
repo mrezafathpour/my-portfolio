@@ -1,4 +1,5 @@
 import GradientLights from "./components/GradientLights";
+import OfflineOverlay from "./components/OfflineOverlay";
 import Intro from "./sections/intro/Intro";
 import Skills from "./sections/skills/Skills";
 import Projects from "./sections/projects/Projects";
@@ -16,6 +17,7 @@ const App = () => {
                 <Journey />
                 <Contact />
             </main>
+            <OfflineOverlay />
         </NavigationProvider>
     );
 };
