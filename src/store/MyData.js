@@ -55,9 +55,9 @@ export const MyProjects = [
         description:
             "Azar Park is an intelligent urban parking management system that started it's first phase in Kashan city and now it's being adopted in Tabriz as well.",
         images: [
-            process.env.PUBLIC_URL + "/images/projects/azar1.png",
-            process.env.PUBLIC_URL + "/images/projects/azar2.png",
-            process.env.PUBLIC_URL + "/images/projects/azar3.png",
+            process.env.PUBLIC_URL + "/images/projects/azar1.webp",
+            process.env.PUBLIC_URL + "/images/projects/azar2.webp",
+            process.env.PUBLIC_URL + "/images/projects/azar3.webp",
         ],
     },
     {
@@ -66,9 +66,9 @@ export const MyProjects = [
         description:
             "Kachar is an online shopping and service system in cars field. It is implemented as a multi vendor application.",
         images: [
-            process.env.PUBLIC_URL + "/images/projects/car1.png",
-            process.env.PUBLIC_URL + "/images/projects/car2.png",
-            process.env.PUBLIC_URL + "/images/projects/car3.png",
+            process.env.PUBLIC_URL + "/images/projects/car1.webp",
+            process.env.PUBLIC_URL + "/images/projects/car2.webp",
+            process.env.PUBLIC_URL + "/images/projects/car3.webp",
         ],
     },
     {
@@ -77,10 +77,10 @@ export const MyProjects = [
         description:
             "Birka Market is an online shopping system, a mobile based application and website for consumer goods.",
         images: [
-            process.env.PUBLIC_URL + "/images/projects/market1.png",
-            process.env.PUBLIC_URL + "/images/projects/market2.png",
-            process.env.PUBLIC_URL + "/images/projects/market3.png",
-            process.env.PUBLIC_URL + "/images/projects/market4.png",
+            process.env.PUBLIC_URL + "/images/projects/market1.webp",
+            process.env.PUBLIC_URL + "/images/projects/market2.webp",
+            process.env.PUBLIC_URL + "/images/projects/market3.webp",
+            process.env.PUBLIC_URL + "/images/projects/market4.webp",
         ],
     },
     {
@@ -89,10 +89,10 @@ export const MyProjects = [
         description:
             "Bilit (also known as Bilit.com) is the most experienced and reputable airline ticket reservation system and online purchase of charter, trains and buses.",
         images: [
-            process.env.PUBLIC_URL + "/images/projects/bilit1.png",
-            process.env.PUBLIC_URL + "/images/projects/bilit2.png",
-            process.env.PUBLIC_URL + "/images/projects/bilit3.png",
-            process.env.PUBLIC_URL + "/images/projects/bilit4.png",
+            process.env.PUBLIC_URL + "/images/projects/bilit1.webp",
+            process.env.PUBLIC_URL + "/images/projects/bilit2.webp",
+            process.env.PUBLIC_URL + "/images/projects/bilit3.webp",
+            process.env.PUBLIC_URL + "/images/projects/bilit4.webp",
         ],
     },
     {
@@ -101,10 +101,10 @@ export const MyProjects = [
         description:
             "Hichhop moved to other provinces of the country as well in order to expand the idea in other cities and hold free tours",
         images: [
-            process.env.PUBLIC_URL + "/images/projects/safar1.png",
-            process.env.PUBLIC_URL + "/images/projects/safar2.png",
-            process.env.PUBLIC_URL + "/images/projects/safar3.png",
-            process.env.PUBLIC_URL + "/images/projects/safar4.png",
+            process.env.PUBLIC_URL + "/images/projects/safar1.webp",
+            process.env.PUBLIC_URL + "/images/projects/safar2.webp",
+            process.env.PUBLIC_URL + "/images/projects/safar3.webp",
+            process.env.PUBLIC_URL + "/images/projects/safar4.webp",
         ],
     },
     {
@@ -113,10 +113,10 @@ export const MyProjects = [
         description:
             "Alast is a consultancy platform in accounting and law that works as a mobile application and web site.",
         images: [
-            process.env.PUBLIC_URL + "/images/projects/consult1.png",
-            process.env.PUBLIC_URL + "/images/projects/consult2.png",
-            process.env.PUBLIC_URL + "/images/projects/consult3.png",
-            process.env.PUBLIC_URL + "/images/projects/consult4.png",
+            process.env.PUBLIC_URL + "/images/projects/consult1.webp",
+            process.env.PUBLIC_URL + "/images/projects/consult2.webp",
+            process.env.PUBLIC_URL + "/images/projects/consult3.webp",
+            process.env.PUBLIC_URL + "/images/projects/consult4.webp",
         ],
     },
 ];
