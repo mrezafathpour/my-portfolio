@@ -359,14 +359,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    /* As wide as the content below it (set from ProjectGallery), so the title
-       and the buttons sit exactly above its left and right edges */
     box-sizing: border-box;
     width: 100%;
-    max-width: var(--pg-content-width, calc(100% - 2 * var(--pg-gutter)));
     margin: 0 auto;
-    padding: 1rem 0;
-    transition: max-width 0.35s ease;
+    padding: 2rem;
 }
 
 .pg-heading {
@@ -605,19 +601,25 @@
 }
 
 @media (max-width: 767px) {
-    /* The slide fills the content width so it lines up with other sections */
+    /* The previous and next slides peek in on both sides */
     .pc {
-        --pc-size: 1;
-        --pc-shift: 106%;
-        --pc-shrink: 0.1;
+        --pc-size: 0.8;
+        --pc-shrink: 0.15;
     }
 
+    /* Runs past the wrapper's 1rem gutters, out to the screen edges */
     .pc-stage {
+        margin: 0 -1rem;
         padding: 1rem 0 2.5rem;
     }
 
     .pc-slide {
         border-radius: 14px;
+    }
+
+    /* The side slides run off the screen edges, so they get square corners */
+    .pc-slide:not(.is-active) {
+        border-radius: 0;
     }
 
     .pc-slide-badge {
@@ -634,10 +636,6 @@
     .pc-desc {
         font-size: 1rem;
         line-height: 1.5rem;
-    }
-
-    .pg-header {
-        padding: 0.75rem 0;
     }
 
     .pg-title {
@@ -660,16 +658,13 @@
         border-radius: 8px;
     }
 
+    /* On touch screens a swipe (or a thumbnail) changes the slide or image,
+       so the carousel's counter, arrows and dots and the gallery's arrows
+       are hidden */
+    .pc-count,
+    .pc-controls,
     .pg-arrow {
-        background: rgba(15, 23, 42, 0.6);
-    }
-
-    .pg-arrow-prev {
-        left: calc(var(--pg-gutter) + 0.5rem);
-    }
-
-    .pg-arrow-next {
-        right: calc(var(--pg-gutter) + 0.5rem);
+        display: none;
     }
 
     .pg-footer {
