@@ -1,16 +1,25 @@
 :root {
     color-scheme: light dark;
 
+    /* ===== Theme =====
+       The app's accent colours: change these two and every accent follows,
+       including the faded glows and shadows made from them */
+    --accent: #ff6b35;
+    --accent-light: #ffb28c;
+    /* For accent text and icons: the deep shade on the light page, the light
+       shade on the dark one, where it reads better (switched below) */
+    --accent-text: var(--accent);
+
     /* Light mode colors */
     --background-light-mode: #eeeef4;
     --text-light-mode: #1a1a1a;
-    --primary-light-mode: rgba(0, 96, 255, 1);
+    --primary-light-mode: var(--accent);
     --secondary-light-mode: #6c757d;
 
     /* Dark mode colors */
     --background-dark-mode: #1a1a1a;
     --text-dark-mode: #eeeef4;
-    --primary-dark-mode: hsl(217, 100%, 80%);
+    --primary-dark-mode: var(--accent-light);
     --secondary-dark-mode: #a1a8ae;
 
     /* Stacking order, back to front. Popups are native <dialog>s shown in the
@@ -61,6 +70,7 @@ body a {
 @media (prefers-color-scheme: dark) {
     :root {
         color-scheme: dark;
+        --accent-text: var(--accent-light);
     }
     body {
         background-color: var(--background-dark-mode);
