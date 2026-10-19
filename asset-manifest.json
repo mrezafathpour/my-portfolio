@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/my-portfolio/static/css/main.9df2ab8b.css",
-    "main.js": "/my-portfolio/static/js/main.224abc15.js",
+    "main.css": "/my-portfolio/static/css/main.166de043.css",
+    "main.js": "/my-portfolio/static/js/main.12daa5ea.js",
     "static/media/Aeonik-Bold.ttf": "/my-portfolio/static/media/Aeonik-Bold.81657f19d2fb319958c8.ttf",
     "static/media/Aeonik-Regular.ttf": "/my-portfolio/static/media/Aeonik-Regular.53b95a6b9aa7da4feab5.ttf",
     "index.html": "/my-portfolio/index.html"
   },
   "entrypoints": [
-    "static/css/main.9df2ab8b.css",
-    "static/js/main.224abc15.js"
+    "static/css/main.166de043.css",
+    "static/js/main.12daa5ea.js"
   ]
 }
