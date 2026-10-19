@@ -6,7 +6,7 @@ import {
     useState,
 } from "react";
 import Navbar from "../../components/navbar/Navbar";
-import { useNavigation } from "../../features/navigation/NavigationContext";
+import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import { MyIntro } from "../../store/MyData";
 import "./Intro.css";
 
@@ -35,12 +35,17 @@ const FADE_DURATION = 0.25;
 const BLUR_DURATION = 1;
 const TRAIL_FALLOFF = 3;
 
+// The toggle button fades in once most of the text has appeared: after the
+// greeting and profession, or early in the (much longer) description
+const TOGGLE_DELAY = { title: "2.4s", description: "1.5s" };
+
+const PHOTO = `${process.env.PUBLIC_URL}/main/me.webp`;
+
 const Intro = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [titleMode, setTitleMode] = useState(true);
     const [descriptionPace, setDescriptionPace] = useState(1);
     const descriptionRef = useRef(null);
-    const { setHandleIntro } = useNavigation();
 
     const restartAnimation = useCallback(() => {
         setIsVisible(false);
@@ -145,20 +150,11 @@ const Intro = () => {
         });
     };
 
-    // Must keep the same identity between renders: it is registered in the
-    // navigation context below, and a new function on every render would make
-    // that effect re-register it each time, re-rendering this component in an
-    // endless loop ("Maximum update depth exceeded")
-    const handleIntroductionClick = useCallback(() => {
+    // Switches between the greeting and the description, writing it in anew
+    const toggleIntro = () => {
         setTitleMode((mode) => !mode);
         restartAnimation();
-    }, [restartAnimation]);
-
-    useEffect(() => {
-        setHandleIntro(() => handleIntroductionClick);
-
-        return () => setHandleIntro(null);
-    }, [handleIntroductionClick, setHandleIntro]);
+    };
 
     // Slower letters need the later sentences to start later by the same
     // factor, so the sentences still follow each other without overlapping
@@ -169,11 +165,28 @@ const Intro = () => {
         <>
             <Navbar />
             <section className="intro-section" id="Intro">
-                <div className="wrapper">
+                <div
+                    className={`wrapper intro-layout ${
+                        titleMode ? "is-title" : "is-description"
+                    }`}
+                >
+                    {/* Beside the text on wide screens; on phones the
+                        greeting is written over it (Intro.css) */}
+                    <figure className="intro-photo">
+                        <div className="intro-photo-frame">
+                            <img
+                                src={PHOTO}
+                                alt="Mohammadreza Fathpour"
+                                width="800"
+                                height="1200"
+                                fetchPriority="high"
+                                draggable={false}
+                                className="disable-select"
+                            />
+                        </div>
+                    </figure>
                     {titleMode && (
-                        <h1
-                            className="disable-select"
-                        >
+                        <h1 className="intro-text disable-select">
                             <div className="sentence-wrapper">
                                 <span className="sentence">
                                     {animateText(MyIntro.greeting)}
@@ -185,9 +198,7 @@ const Intro = () => {
                         </h1>
                     )}
                     {!titleMode && (
-                        <div
-                            className="sentence-wrapper"
-                        >
+                        <div className="intro-text sentence-wrapper">
                             {MyIntro.description.map((sentence, i) => (
                                 <code
                                     key={i}
@@ -205,6 +216,42 @@ const Intro = () => {
                             ))}
                         </div>
                     )}
+                    <button
+                        type="button"
+                        className={`intro-toggle disable-select${
+                            isVisible ? " is-visible" : ""
+                        }`}
+                        style={{
+                            "--intro-toggle-delay":
+                                TOGGLE_DELAY[
+                                    titleMode ? "title" : "description"
+                                ],
+                        }}
+                        onClick={toggleIntro}
+                    >
+                        {titleMode ? (
+                            <>
+                                <span>
+                                    More
+                                    <span className="intro-toggle-long">
+                                        {" About Me"}
+                                    </span>
+                                </span>
+                                <FiArrowRight
+                                    className="intro-toggle-next"
+                                    aria-hidden="true"
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <FiArrowLeft
+                                    className="intro-toggle-back"
+                                    aria-hidden="true"
+                                />
+                                Go Back
+                            </>
+                        )}
+                    </button>
                 </div>
             </section>
         </>

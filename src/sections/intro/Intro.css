@@ -9,9 +9,177 @@
 .intro-section h1 {
     font-weight: lighter;
     font-size: 6rem;
-    margin: 10rem 0rem;
+    margin: 0;
     display: flex;
-    justify-content: center;
+}
+
+/* ---------- Layout: the text and its toggle beside the photo ---------- */
+
+.intro-section .intro-layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 1fr auto auto 1fr;
+    grid-template-areas:
+        ". photo"
+        "text photo"
+        "toggle photo"
+        ". photo";
+    align-items: center;
+    column-gap: clamp(2rem, 5vw, 5rem);
+}
+
+.intro-layout .intro-text {
+    grid-area: text;
+}
+
+.intro-layout .intro-toggle {
+    grid-area: toggle;
+    justify-self: start;
+}
+
+.intro-layout.is-title .intro-toggle {
+    margin-top: 2.5rem;
+}
+
+/* ---------- Photo: a rounded frame with an accent outline offset behind
+   it and an accent glow under it ---------- */
+
+.intro-photo {
+    grid-area: photo;
+    position: relative;
+    isolation: isolate;
+    /* Never taller (at 2:3) than three quarters of the screen */
+    width: min(clamp(15rem, 30vw, 28rem), 50vh);
+    margin: 0;
+    animation: introPhotoIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+.intro-photo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border: 2px solid var(--accent);
+    border-radius: 1.75rem;
+    opacity: 0.7;
+    transform: translate(1.25rem, 1.25rem);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) {
+    .intro-photo:hover::before {
+        transform: translate(0.75rem, 0.75rem);
+    }
+}
+
+.intro-photo-frame {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    border-radius: 1.75rem;
+    overflow: hidden;
+    box-shadow:
+        0 30px 80px -24px color-mix(in srgb, var(--accent) 55%, transparent),
+        0 18px 40px -20px rgba(0, 0, 0, 0.45);
+}
+
+.intro-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 59% 30%;
+    transform: scale(1.05);
+}
+
+@keyframes introPhotoIn {
+    from {
+        opacity: 0;
+        transform: translateY(1.5rem) scale(0.97);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .intro-photo {
+        animation: none;
+    }
+}
+
+/* Switches between the greeting and the description. It fades in once
+   most of the text is written (--intro-toggle-delay, set in Intro.jsx),
+   and vanishes at once when the text starts over. */
+.intro-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1.375rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    border-radius: 999px;
+    font-family: "main-bold";
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    color: var(--accent-text);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.5rem);
+}
+
+.intro-toggle.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+        opacity 0.6s ease var(--intro-toggle-delay),
+        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--intro-toggle-delay),
+        visibility 0s var(--intro-toggle-delay),
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.intro-toggle svg {
+    width: 1.1em;
+    height: 1.1em;
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) {
+    .intro-toggle:hover {
+        color: #fff;
+        background: var(--accent);
+        border-color: var(--accent);
+    }
+
+    /* The arrow nudges the way it points */
+    .intro-toggle:hover .intro-toggle-next {
+        transform: translateX(3px);
+    }
+
+    .intro-toggle:hover .intro-toggle-back {
+        transform: translateX(-3px);
+    }
+}
+
+/* Phones say just "More" */
+@media (max-width: 767px) {
+    .intro-toggle-long {
+        display: none;
+    }
+}
+
+.intro-toggle:focus-visible {
+    outline: 3px solid var(--accent-light);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .intro-toggle.is-visible {
+        transition: none;
+    }
 }
 
 .intro-section .sentence-wrapper {
@@ -34,7 +202,7 @@
     margin: 0 0 1.5rem 0;
     margin-bottom: 3rem;
     line-height: 4rem;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .intro-section .profession {
@@ -61,12 +229,6 @@
     .intro-section .description {
         font-size: 2rem;
         line-height: 3rem;
-    }
-}
-
-@media (min-width: 1024px) and (max-width: 1536px) {
-    .intro-section .sentence-wrapper {
-        padding: 0 8rem;
     }
 }
 
@@ -109,17 +271,212 @@
     }
 }
 
-/* The greeting and profession always stay on one line each: below this width
-   their size follows the screen width. The greeting is about 11 times its
-   font size wide (11.6 leaves some room), and 2rem is the wrapper's gutters */
-@media (max-width: 640px) {
-    .intro-section h1 .sentence {
+/* ---------- Phones and upright tablets: with the greeting, the photo fills
+   the whole screen and fades out into the page towards the bottom, where
+   the greeting and toggle sit ---------- */
+@media (max-width: 767px), (max-width: 1024px) and (orientation: portrait) {
+    .intro-section {
+        position: relative;
+        isolation: isolate;
+        /* The screen's visible height, without the browser's toolbars (as
+           measured in index.js when installed as an app) */
+        height: var(--app-height, 100svh);
+
+        /* Eased fades (smoothstep), starting and ending gently so no edge
+           shows where they begin or end. The photo fades out first, then
+           the plain page under it gives way to the background lights, so
+           the intro ends just like the section below begins. */
+        --intro-photo-fade: linear-gradient(
+            to bottom,
+            #000 30%,
+            rgba(0, 0, 0, 0.972) 35%,
+            rgba(0, 0, 0, 0.896) 40%,
+            rgba(0, 0, 0, 0.784) 45%,
+            rgba(0, 0, 0, 0.648) 50%,
+            rgba(0, 0, 0, 0.500) 55%,
+            rgba(0, 0, 0, 0.352) 60%,
+            rgba(0, 0, 0, 0.216) 65%,
+            rgba(0, 0, 0, 0.104) 70%,
+            rgba(0, 0, 0, 0.028) 75%,
+            transparent 80%
+        );
+        --intro-page-fade: linear-gradient(
+            to bottom,
+            #000 55%,
+            rgba(0, 0, 0, 0.972) 59.5%,
+            rgba(0, 0, 0, 0.896) 64%,
+            rgba(0, 0, 0, 0.784) 68.5%,
+            rgba(0, 0, 0, 0.648) 73%,
+            rgba(0, 0, 0, 0.500) 77.5%,
+            rgba(0, 0, 0, 0.352) 82%,
+            rgba(0, 0, 0, 0.216) 86.5%,
+            rgba(0, 0, 0, 0.104) 91%,
+            rgba(0, 0, 0, 0.028) 95.5%,
+            transparent 100%
+        );
+    }
+
+    .intro-section .intro-layout {
+        /* For sizing the greeting: the content width (the screen less the
+           wrapper's side padding), and the largest sizes it may reach */
+        --intro-text-width: calc(100vw - 2rem);
+        --intro-greeting-max: 2.25rem;
+        --intro-profession-max: 2rem;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto;
+        grid-template-areas:
+            "text"
+            "toggle";
+    }
+
+    .intro-layout.is-title {
+        align-self: stretch;
+        align-content: end;
+        /* Clear of the navbar floating at the bottom of the screen, and of
+           the iPhone's home indicator under it */
+        padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Behind the text in both modes: with the description it softens into
+       a faint, blurred background, and comes back into focus with the
+       greeting. Only the photo itself fades (the frame), never the plain
+       layer under it, so the background lights never show through. */
+    .intro-layout .intro-photo {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        width: auto;
+        animation: none;
+    }
+
+    .intro-layout .intro-photo-frame {
+        animation: introPhotoFade 1s ease 0.2s backwards;
+        transition:
+            opacity 0.7s ease,
+            filter 0.7s ease;
+    }
+
+    .intro-layout.is-description .intro-photo-frame {
+        opacity: 0.15;
+        filter: blur(3px);
+    }
+
+    /* Under the photo, so it fades out into the plain page instead of the
+       background lights; this layer fades out too, lower down, letting the
+       lights back in towards the bottom, so the intro blends into the next
+       section without a visible edge */
+    .intro-photo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: var(--background-light-mode);
+        -webkit-mask-image: var(--intro-page-fade);
+        mask-image: var(--intro-page-fade);
+    }
+
+    .intro-photo::before {
+        display: none;
+    }
+
+    .intro-photo-frame {
+        height: 100%;
+        aspect-ratio: auto;
+        border-radius: 0;
+        box-shadow: none;
+        -webkit-mask-image: var(--intro-photo-fade);
+        mask-image: var(--intro-photo-fade);
+    }
+
+    /* Moved up, so more of the body sits in the clear upper part of the
+       screen instead of the faded lower part; the top of the photo (sky)
+       goes off screen, and its fade (--intro-photo-fade) ends where the
+       moved photo now ends */
+    .intro-photo img {
+        object-position: 50% 30%;
+        transform: translateY(-15%);
+    }
+
+    /* A soft glow in the page's colour keeps the text readable where the
+       photo has not quite faded out yet */
+    .intro-layout.is-title {
+        --intro-text-glow: 0 0 1rem var(--background-light-mode);
+    }
+
+    .intro-layout.is-title h1 {
+        text-shadow: var(--intro-text-glow);
+    }
+
+    /* One line each, sized to the screen: the greeting is about 11 times its
+       font size wide (11.6 leaves some room) */
+    .intro-layout.is-title h1 .sentence {
         flex-wrap: nowrap;
         white-space: nowrap;
-        font-size: min(2rem, calc((100vw - 2rem) / 11.6));
+        margin-bottom: 0.25rem;
+        font-size: min(
+            var(--intro-greeting-max),
+            calc(var(--intro-text-width) / 11.6)
+        );
     }
-    .intro-section h1 .profession {
-        font-size: min(1.75rem, calc((100vw - 2rem) / 13.25));
+
+    .intro-layout.is-title h1 .profession {
+        font-size: min(
+            var(--intro-profession-max),
+            calc(var(--intro-text-width) / 13.25)
+        );
+        text-shadow: var(--intro-text-glow);
+    }
+
+    .intro-layout .intro-toggle {
+        margin-top: 0.5rem;
+    }
+
+    .intro-layout.is-title .intro-toggle {
+        margin-top: 1.5rem;
+    }
+}
+
+/* Upright tablets: the same, scaled up to the larger screen */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+    .intro-section .intro-layout {
+        /* The wrapper's side padding is 2rem from this width on */
+        --intro-text-width: calc(100vw - 4rem);
+        --intro-greeting-max: 3.75rem;
+        --intro-profession-max: 3.25rem;
+    }
+
+    .intro-layout.is-title {
+        padding-bottom: calc(8rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .intro-layout.is-title h1 .sentence {
+        margin-bottom: 0.5rem;
+    }
+
+    .intro-layout.is-title .intro-toggle {
+        margin-top: 2rem;
+    }
+
+    .intro-toggle {
+        padding: 0.875rem 1.625rem;
+        font-size: 1.125rem;
+    }
+}
+
+@media (max-width: 767px) and (prefers-color-scheme: dark),
+    (max-width: 1024px) and (orientation: portrait) and (prefers-color-scheme: dark) {
+    .intro-layout.is-title {
+        --intro-text-glow: 0 0 1rem var(--background-dark-mode);
+    }
+
+    .intro-photo::after {
+        background: var(--background-dark-mode);
+    }
+}
+
+@keyframes introPhotoFade {
+    from {
+        opacity: 0;
     }
 }
 
@@ -127,5 +484,13 @@
     .intro-section .wrapper {
         margin: 2rem auto;
         padding-bottom: 4rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .intro-layout .intro-photo,
+    .intro-layout .intro-photo-frame {
+        animation: none;
+        transition: none;
     }
 }

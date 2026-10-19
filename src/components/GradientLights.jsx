@@ -20,7 +20,7 @@ const MIN_RESIZE_DELTA = 100;
 
 // Lights glow much stronger on the dark page, so there they are dimmed to
 // this share of their brightness
-const DARK_MODE_DIMMING = 0.5;
+const DARK_MODE_DIMMING = 0.7;
 
 function shuffle(items) {
     const result = [...items];

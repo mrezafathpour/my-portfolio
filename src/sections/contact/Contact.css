@@ -38,12 +38,20 @@
     opacity: 0.85;
     letter-spacing: 0.05em;
     margin-top: 1.5rem;
+    padding: 0 1rem;
+}
+
+@media (max-width: 1024px) {
+    .footer-note {
+        font-size: 1rem;
+        line-height: 1.25rem;
+    }
 }
 
 @media (max-width: 767px) {
     .footer-note {
         font-size: 0.75rem;
-        line-height: 1.25rem;
+        line-height: 1rem;
     }
 }
 

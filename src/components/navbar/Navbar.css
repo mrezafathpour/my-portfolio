@@ -1,6 +1,7 @@
 .nav-container {
     position: fixed;
-    bottom: 2rem;
+    /* Above the iPhone's home indicator, where there is one */
+    bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
     left: 50%;
     padding: 0.5rem 1rem 0.75rem 1rem;   
     border-radius: 22px;
@@ -32,7 +33,10 @@
     }
 }
 
+/* Hidden, it only fades out, so it must also stop catching clicks meant
+   for what is underneath (the contact links at the bottom of the page) */
 .nav-container.nav-hidden {
+    pointer-events: none;
     animation: navbarCollapse 0.35s ease-out forwards;
 }
 
@@ -153,6 +157,6 @@
     }
 
     .nav-container {
-        bottom: 1rem;
+        bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
     }
 }

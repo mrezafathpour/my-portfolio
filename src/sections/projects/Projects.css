@@ -235,9 +235,52 @@
    A curve (x1, y1, x2, y2) mirrors to (1 - x2, 1 - y2, 1 - x1, 1 - y1). */
 .pg[open] {
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     /* Header, footer and backdrop fade in while the photos start arriving */
     animation: pgFadeIn 0.3s ease;
+}
+
+/* The photo wall and an opened photo are two views, each with its own
+   header, content and footer, filling the popup one at a time */
+.pg-view {
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+}
+
+/* Content shorter than the screen keeps the header and footer close to it
+   (1.5rem away, with the content's own padding) and the three sit in the
+   middle together; taller content takes all the room left between them.
+   The photo wall then scrolls. */
+.pg-view-wall {
+    grid-template-rows: auto minmax(0, auto) auto;
+    align-content: center;
+}
+
+/* An opened photo shrinks instead. It sizes itself to the room it is
+   given, which a grid row cannot give it here, but a flex column can: the
+   stage starts at the photo's natural height and only shrinks (and the
+   photo with it, through its max-height) when everything does not fit. */
+.pg-view-photo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pg-view-photo .pg-header,
+.pg-view-photo .pg-footer {
+    flex-shrink: 0;
+}
+
+/* Switching views: the one on show fades out as a whole, and only then is
+   the other one put in its place, fading in (handleAnimationEnd) */
+.pg.has-viewed .pg-view {
+    animation: pgFadeIn 0.3s ease;
+}
+
+.pg.is-switching .pg-view {
+    pointer-events: none;
+    animation: pgViewOut 0.25s cubic-bezier(0.75, 0, 0.75, 0.9) forwards;
 }
 
 /* ...and fade out last, once the photos have left: the photos take
@@ -263,15 +306,8 @@
     animation-delay: calc((var(--pg-count) - 1 - var(--i)) * 70ms);
 }
 
-.pg.is-leaving .pg-image,
 .pg.is-closing .pg-image {
     animation: pgImageOut 0.35s cubic-bezier(0.75, 0, 0.75, 0.9) forwards;
-}
-
-.pg.is-leaving .pg-arrow,
-.pg.is-leaving .pg-thumbs {
-    pointer-events: none;
-    animation: pgFadeOut 0.35s cubic-bezier(0.75, 0, 0.75, 0.9) forwards;
 }
 
 /* Persistent lights: parked invisible on the page, shown inside the popup */
@@ -302,6 +338,16 @@
 }
 
 @keyframes pgFadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* pgFadeOut under its own name, so its end is told apart from the popup's */
+@keyframes pgViewOut {
     from {
         opacity: 1;
     }
@@ -354,6 +400,8 @@
     }
 }
 
+/* Its sides line up with the content below, the photo wall or the photo on
+   show, whose width ProjectGallery.jsx measures into --pg-content-width */
 .pg-header {
     display: flex;
     align-items: center;
@@ -361,8 +409,9 @@
     gap: 1rem;
     box-sizing: border-box;
     width: 100%;
+    max-width: calc(var(--pg-content-width, 68rem) + 2 * var(--pg-gutter));
     margin: 0 auto;
-    padding: 1rem;
+    padding: 1rem var(--pg-gutter);
 }
 
 .pg-heading {
@@ -422,6 +471,9 @@
     min-height: 0;
     padding: 0.5rem var(--pg-gutter);
     overflow-y: auto;
+    /* A scrollbar takes room from both sides alike, so the wall stays
+       centred under the header */
+    scrollbar-gutter: stable both-edges;
 }
 
 .pg-grid {
@@ -490,8 +542,9 @@
     display: grid;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     place-items: center;
+    flex: 0 1 auto;
     min-height: 0;
-    padding: 0 calc(var(--pg-gutter) + 4rem);
+    padding: 0.5rem calc(var(--pg-gutter) + 4rem);
     touch-action: pan-y;
 }
 
@@ -524,7 +577,7 @@
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    padding: 1.25rem var(--pg-gutter) 1.5rem;
+    padding: 1rem var(--pg-gutter) 1.5rem;
 }
 
 .pg-desc {
@@ -643,7 +696,7 @@
     }
 
     .pg-stage {
-        padding: 0 var(--pg-gutter);
+        padding: 0.5rem var(--pg-gutter);
     }
 
     .pg-grid {
@@ -684,11 +737,11 @@
 /* Short viewports (landscape phones): give the image all the room */
 @media (max-height: 520px) {
     .pg-header {
-        padding: 0.5rem 0;
+        padding: 0.5rem var(--pg-gutter);
     }
 
     .pg-stage {
-        padding: 0 calc(var(--pg-gutter) + 3.5rem);
+        padding: 0.5rem calc(var(--pg-gutter) + 3.5rem);
     }
 
     .pg-footer {

@@ -13,13 +13,13 @@
             content="#1a1a1a"
             media="(prefers-color-scheme: dark)"
         />
-        <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+        <link rel="icon" type="image/svg+xml" href="icons/favicon.svg" />
         <title>You're offline · &lt;/ MR &gt;</title>
         <!--
-            Shown by the service worker (sw.js) when a page cannot be loaded
-            without a connection. Once the app is running, its own twin of
-            this page takes over (src/components/offline/OfflineScreen.jsx). It is cached on its own, so everything it
-            needs (styles, logo, script) lives in this one file.
+            Shown by the service worker (service-worker.js) when the app is opened without
+            a connection. An app that is already open stays as it is when the
+            connection drops. It is cached on its own, so everything it needs
+            (styles, logo, script) lives in this one file.
         -->
         <style>
             :root {
@@ -154,7 +154,7 @@
             }
 
             /* Ripples searching for a connection: the tile's own outline,
-               corners included (favicon.svg rounds them by 3 of its 16
+               corners included (icons/favicon.svg rounds them by 3 of its 16
                units), growing outwards */
             .ripple {
                 width: var(--logo-size);
@@ -514,7 +514,7 @@
         </main>
 
         <script>
-            // The "MR" letters of favicon.svg as [x, y, width, height] blocks
+            // The "MR" letters of icons/favicon.svg as [x, y, width, height] blocks
             // on its 16 x 16 grid, split below into single pixels
             var BLOCKS = [
                 [2, 4, 1, 8],

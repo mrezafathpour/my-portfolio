@@ -27,7 +27,6 @@
     --z-background: -1; /* fixed gradient lights */
     --z-content: 0; /* sections; their own layers stay isolated inside them */
     --z-navbar: 100;
-    --z-offline: 200; /* offline page shown over the whole app */
 }
 
 @font-face {
@@ -62,6 +61,10 @@ body {
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--background-light-mode);
     color: var(--text-light-mode);
+    /* The page may run under an iPhone's notch (viewport-fit=cover in
+       index.html); turned sideways, its content stays clear of it */
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
 }
 
 body a {

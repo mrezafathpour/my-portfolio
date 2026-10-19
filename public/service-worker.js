@@ -4,9 +4,9 @@
 // Paths are relative to this file, so it works under /my-portfolio/ too.
 
 // Bump the version whenever offline.html changes, so the new one is cached
-const CACHE = "offline-v4";
+const CACHE = "offline-v5";
 const OFFLINE_URL = "offline.html";
-const PRECACHE = [OFFLINE_URL, "favicon.svg"];
+const PRECACHE = [OFFLINE_URL, "icons/favicon.svg"];
 
 self.addEventListener("install", (event) => {
     event.waitUntil(
@@ -70,7 +70,7 @@ self.addEventListener("fetch", (event) => {
     }
 
     // The offline page's icon, which it cannot fetch while offline
-    if (new URL(request.url).pathname.endsWith("/favicon.svg")) {
+    if (new URL(request.url).pathname.endsWith("/icons/favicon.svg")) {
         event.respondWith(
             caches
                 .match(request)
