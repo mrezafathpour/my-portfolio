@@ -40,8 +40,12 @@ export default function ProjectGallery({ project, onClose }) {
     // null shows the photo wall, a number shows that image full size
     const [index, setIndex] = useState(null);
     const [isClosing, setIsClosing] = useState(false);
-    const [isLeaving, setIsLeaving] = useState(false);
-    // Once a photo has been opened, the wall comes back without its entrance
+    // Where a switch between the wall and a photo is heading (null: the
+    // wall), while the view on show fades out; undefined when not switching
+    const [switchingTo, setSwitchingTo] = useState(undefined);
+    const isSwitching = switchingTo !== undefined;
+    // Once a photo has been opened, the wall comes back without its entrance,
+    // and every later view fades in instead
     const [hasViewed, setHasViewed] = useState(false);
 
     const dialogRef = useRef(null);
@@ -57,8 +61,8 @@ export default function ProjectGallery({ project, onClose }) {
     const next = () => setIndex((current) => (current + 1) % count);
     const prev = () => setIndex((current) => (current - 1 + count) % count);
 
-    // Both exits play their animation first (the mirror image of the entrance,
-    // see Projects.css) and actually leave when it ends: handleAnimationEnd
+    // Closing and switching views play their exit first (see Projects.css)
+    // and only then actually happen: handleAnimationEnd
     const close = () => {
         if (isClosing) return;
 
@@ -66,19 +70,32 @@ export default function ProjectGallery({ project, onClose }) {
         else setIsClosing(true);
     };
 
-    const backToGrid = () => {
-        if (isLeaving || isClosing) return;
-
-        if (prefersReducedMotion()) setIndex(null);
-        else setIsLeaving(true);
+    const showView = (target) => {
+        setIndex(target);
+        setHasViewed(true);
     };
+
+    // target: a photo's index, or null for the wall
+    const switchView = (target) => {
+        if (isSwitching || isClosing) return;
+
+        if (prefersReducedMotion()) showView(target);
+        else setSwitchingTo(target);
+    };
+
+    const openImage = (i) => switchView(i);
+    const backToGrid = () => switchView(null);
 
     const handleAnimationEnd = (e) => {
         if (e.animationName === "pgFadeOut" && e.target === e.currentTarget) {
             dialogRef.current?.close();
-        } else if (e.animationName === "pgImageOut" && isLeaving) {
-            setIndex(null);
-            setIsLeaving(false);
+        } else if (
+            e.animationName === "pgViewOut" &&
+            isSwitching &&
+            !isClosing
+        ) {
+            showView(switchingTo);
+            setSwitchingTo(undefined);
         }
     };
 
@@ -148,17 +165,26 @@ export default function ProjectGallery({ project, onClose }) {
         else close();
     };
 
-    const openImage = (i) => {
-        setIndex(i);
-        setHasViewed(true);
-    };
-
+    // A click on any empty part of the popup steps back: to the wall from a
+    // photo, or out of the gallery from the wall. Clicks on what is shown
+    // (buttons, photos, the title and the description) do not.
     const handleBackdropClick = (e) => {
-        if (e.target !== e.currentTarget) return;
+        if (e.target.closest("button, img, .pg-heading, .pg-desc")) return;
 
         if (isViewing) backToGrid();
         else close();
     };
+
+    const closeButton = (
+        <button
+            type="button"
+            className="pg-btn"
+            aria-label="Close gallery"
+            onClick={close}
+        >
+            <FiX aria-hidden="true" />
+        </button>
+    );
 
     return (
         <dialog
@@ -168,7 +194,7 @@ export default function ProjectGallery({ project, onClose }) {
                 (isViewing ? " is-viewing" : "") +
                 (hasViewed ? " has-viewed" : "") +
                 (isClosing ? " is-closing" : "") +
-                (isLeaving ? " is-leaving" : "")
+                (isSwitching ? " is-switching" : "")
             }
             style={{ "--pg-count": count }}
             tabIndex={-1}
@@ -177,118 +203,114 @@ export default function ProjectGallery({ project, onClose }) {
             onCancel={handleCancel}
             onKeyDown={handleKeyDown}
             onAnimationEnd={handleAnimationEnd}
+            onClick={handleBackdropClick}
         >
-            <header className="pg-header">
-                <div className="pg-heading">
-                    <h3 className="pg-title">{project.title}</h3>
-                    <span className="pg-count">
-                        {isViewing
-                            ? `${index + 1} / ${count}`
-                            : `${count} photos`}
-                    </span>
-                </div>
-                <div className="pg-actions">
-                    {isViewing && (
-                        <button
-                            type="button"
-                            className="pg-btn"
-                            aria-label="Back to all photos"
-                            onClick={backToGrid}
-                        >
-                            <FiGrid aria-hidden="true" />
-                        </button>
-                    )}
-                    <button
-                        type="button"
-                        className="pg-btn"
-                        aria-label="Close gallery"
-                        onClick={close}
-                    >
-                        <FiX aria-hidden="true" />
-                    </button>
-                </div>
-            </header>
             {isViewing ? (
-                <div
-                    className="pg-stage"
-                    onClick={handleBackdropClick}
-                    {...swipeHandlers}
-                >
-                    <img
-                        key={images[index]}
-                        src={images[index]}
-                        alt={`${project.title} screenshot ${index + 1}`}
-                        className="pg-image disable-select"
-                        draggable={false}
-                    />
-                    {count > 1 && (
-                        <>
+                <div key="photo" className="pg-view pg-view-photo">
+                    <header className="pg-header">
+                        <div className="pg-heading">
+                            <h3 className="pg-title">{project.title}</h3>
+                        </div>
+                        <div className="pg-actions">
                             <button
                                 type="button"
-                                className="pg-btn pg-arrow pg-arrow-prev"
-                                aria-label="Previous image"
-                                onClick={prev}
+                                className="pg-btn"
+                                aria-label="Back to all photos"
+                                onClick={backToGrid}
                             >
-                                <FiChevronLeft aria-hidden="true" />
+                                <FiGrid aria-hidden="true" />
                             </button>
-                            <button
-                                type="button"
-                                className="pg-btn pg-arrow pg-arrow-next"
-                                aria-label="Next image"
-                                onClick={next}
-                            >
-                                <FiChevronRight aria-hidden="true" />
-                            </button>
-                        </>
-                    )}
+                            {closeButton}
+                        </div>
+                    </header>
+
+                    <div className="pg-stage" {...swipeHandlers}>
+                        <img
+                            key={images[index]}
+                            src={images[index]}
+                            alt={`${project.title} screenshot ${index + 1}`}
+                            className="pg-image disable-select"
+                            draggable={false}
+                        />
+                        {count > 1 && (
+                            <>
+                                <button
+                                    type="button"
+                                    className="pg-btn pg-arrow pg-arrow-prev"
+                                    aria-label="Previous image"
+                                    onClick={prev}
+                                >
+                                    <FiChevronLeft aria-hidden="true" />
+                                </button>
+                                <button
+                                    type="button"
+                                    className="pg-btn pg-arrow pg-arrow-next"
+                                    aria-label="Next image"
+                                    onClick={next}
+                                >
+                                    <FiChevronRight aria-hidden="true" />
+                                </button>
+                            </>
+                        )}
+                    </div>
+
+                    <footer className="pg-footer">
+                        <div className="pg-thumbs" ref={thumbsRef}>
+                            {images.map((src, i) => (
+                                <button
+                                    key={src}
+                                    type="button"
+                                    className={
+                                        "pg-thumb" +
+                                        (i === index ? " is-active" : "")
+                                    }
+                                    aria-label={`Show image ${i + 1}`}
+                                    aria-current={i === index}
+                                    onClick={() => setIndex(i)}
+                                >
+                                    <img src={src} alt="" draggable={false} />
+                                </button>
+                            ))}
+                        </div>
+                    </footer>
                 </div>
             ) : (
-                <div className="pg-wall" onClick={handleBackdropClick}>
-                    <div className="pg-grid">
-                        {images.map((src, i) => (
-                            <button
-                                key={src}
-                                type="button"
-                                className={`pg-tile pg-tile-${tiles[i]}`}
-                                style={{ "--i": i }}
-                                aria-label={`Open image ${i + 1}`}
-                                onClick={() => openImage(i)}
-                            >
-                                <img
-                                    src={src}
-                                    alt=""
-                                    className="disable-select"
-                                    draggable={false}
-                                />
-                            </button>
-                        ))}
+                <div key="wall" className="pg-view pg-view-wall">
+                    <header className="pg-header">
+                        <div className="pg-heading">
+                            <h3 className="pg-title">{project.title}</h3>
+                            <span className="pg-count">{count} photos</span>
+                        </div>
+                        <div className="pg-actions">{closeButton}</div>
+                    </header>
+
+                    <div className="pg-wall">
+                        <div className="pg-grid">
+                            {images.map((src, i) => (
+                                <button
+                                    key={src}
+                                    type="button"
+                                    className={`pg-tile pg-tile-${tiles[i]}`}
+                                    style={{ "--i": i }}
+                                    aria-label={`Open image ${i + 1}`}
+                                    onClick={() => openImage(i)}
+                                >
+                                    <img
+                                        src={src}
+                                        alt=""
+                                        className="disable-select"
+                                        draggable={false}
+                                    />
+                                </button>
+                            ))}
+                        </div>
                     </div>
+
+                    <footer className="pg-footer">
+                        <p className="pg-desc">{project.description}</p>
+                    </footer>
                 </div>
             )}
-
-            <footer className="pg-footer">
-                {isViewing ? (
-                    <div className="pg-thumbs" ref={thumbsRef}>
-                        {images.map((src, i) => (
-                            <button
-                                key={src}
-                                type="button"
-                                className={
-                                    "pg-thumb" +
-                                    (i === index ? " is-active" : "")
-                                }
-                                aria-label={`Show image ${i + 1}`}
-                                aria-current={i === index}
-                                onClick={() => setIndex(i)}
-                            >
-                                <img src={src} alt="" draggable={false} />
-                            </button>
-                        ))}
-                    </div>
-                ) : (
-                    <p className="pg-desc">{project.description}</p>
-                )}
-            </footer>
         </dialog>
     );
 }

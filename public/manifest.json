@@ -5,30 +5,30 @@
   "description": "Portfolio of Mohammadreza Fathpour — Front-end Developer specializing in React, Next.js, modern UI/UX, and fast, responsive web applications.",
   "icons": [
     {
-      "src": "favicon.svg",
+      "src": "icons/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     },
     {
-      "src": "android-chrome-192x192.png",
+      "src": "icons/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "android-chrome-512x512.png",
+      "src": "icons/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "maskable-icon-192x192.png",
+      "src": "icons/maskable-icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "maskable-icon-512x512.png",
+      "src": "icons/maskable-icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

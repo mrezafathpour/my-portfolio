@@ -58,6 +58,7 @@ export const MyProjects = [
             process.env.PUBLIC_URL + "/images/projects/azar1.webp",
             process.env.PUBLIC_URL + "/images/projects/azar2.webp",
             process.env.PUBLIC_URL + "/images/projects/azar3.webp",
+            process.env.PUBLIC_URL + "/images/projects/azar3.webp",
         ],
     },
     {

@@ -47,13 +47,13 @@ export default function Contact() {
                     ))}
                 </div>
 
-                <footer>
+                <div>
                     <p className="footer-note">
                         v{packageInfo.version} © Copyright {new Date().getFullYear()}{" "}
                         Designed & Developed by{" "}
                         <strong>Mohammadreza Fathpour</strong>
                     </p>
-                </footer>
+                </div>
             </div>
         </section>
     );

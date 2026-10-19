@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigation } from "../../features/navigation/NavigationContext";
 import "./Navbar.css";
 
 const navLinks = ["Intro", "Projects", "Skills", "Journey"];
@@ -21,15 +20,13 @@ export default function Navbar({ scrollDuration = 1000 }) {
     const [hidden, setHidden] = useState(false);
     const [activeSection, setActiveSection] = useState("Intro");
     const [fontsReady, setFontsReady] = useState(false);
-    const { handleIntro } = useNavigation();
 
     // Stops the scroll currently running, if any
     const stopScrollRef = useRef(null);
 
     useEffect(() => () => stopScrollRef.current?.(), []);
 
-    // onDone runs once the page arrives, not if the scroll is interrupted
-    const scrollToY = (targetY, onDone) => {
+    const scrollToY = (targetY) => {
         stopScrollRef.current?.();
 
         const startY = window.scrollY;
@@ -41,7 +38,6 @@ export default function Navbar({ scrollDuration = 1000 }) {
 
         if (prefersReduced || scrollDuration <= 0 || distance === 0) {
             window.scrollTo(0, targetY);
-            onDone?.();
             return;
         }
 
@@ -60,12 +56,8 @@ export default function Navbar({ scrollDuration = 1000 }) {
             const progress = Math.min((now - startTime) / scrollDuration, 1);
             window.scrollTo(0, startY + distance * easeInOutCubic(progress));
 
-            if (progress < 1) {
-                raf = requestAnimationFrame(step);
-            } else {
-                stop();
-                onDone?.();
-            }
+            if (progress < 1) raf = requestAnimationFrame(step);
+            else stop();
         };
 
         USER_SCROLL_EVENTS.forEach((type) =>
@@ -144,25 +136,20 @@ export default function Navbar({ scrollDuration = 1000 }) {
     const handleLinkClick = (e, label) => {
         e.preventDefault();
 
-        // The intro text changes only once the page has scrolled up to it
-        const onArrive =
-            label === "Intro" && handleIntro ? handleIntro : undefined;
-
         const target = document.querySelector(`#${label}`);
         if (target) {
-            scrollToY(
-                target.getBoundingClientRect().top + window.scrollY,
-                onArrive
-            );
-        } else {
-            onArrive?.();
+            scrollToY(target.getBoundingClientRect().top + window.scrollY);
         }
     };
 
     if (!fontsReady) return null;
 
     return (
-        <nav className={`nav-container${hidden ? " nav-hidden" : ""}`}>
+        <nav
+            className={`nav-container${hidden ? " nav-hidden" : ""}`}
+            // Out of reach for the keyboard and screen readers while hidden
+            inert={hidden}
+        >
             <div className="nav-inner">
                 {navLinks.map((label, i) => (
                     <a
