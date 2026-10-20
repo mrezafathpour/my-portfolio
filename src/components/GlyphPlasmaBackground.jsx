@@ -54,13 +54,18 @@ export function GlyphPlasmaBackground({
 
         const pickSizes = () => {
             const w = window.innerWidth;
+            const h = window.innerHeight;
 
             const bpMobile = breakpoints?.mobile ?? 640;
             const bpTablet = breakpoints?.tablet ?? 1024;
 
+            // A phone turned sideways is as wide as a tablet, but should keep
+            // the glyphs it has upright: a short, wide screen counts as a phone
+            const isPhoneSideways = h <= 500 && w > h;
+
             const base = sizes?.base || {};
             const chosen =
-                w < bpMobile
+                w < bpMobile || isPhoneSideways
                     ? sizes?.mobile
                     : w < bpTablet
                       ? sizes?.tablet
