@@ -1,5 +1,9 @@
+/* At least a screen tall, and taller when its content needs it (the
+   description on a phone turned sideways), so nothing is pushed off the top
+   of the screen out of reach */
 .intro-section {
-    height: 100vh;
+    min-height: 100vh;
+    min-height: var(--app-height, 100svh);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -227,8 +231,8 @@
         font-size: 3rem;
     }
     .intro-section .description {
-        font-size: 2rem;
-        line-height: 3rem;
+        font-size: 1.75rem;
+        line-height: 2.25rem;
     }
 }
 
@@ -271,6 +275,65 @@
     }
 }
 
+/* ---------- Large screens (1536px and up): a bigger photo, and the
+   greeting and profession sized to the room left beside it, so they stay
+   on one line each ---------- */
+@media (min-width: 1536px) {
+    .intro-section .intro-layout {
+        /* At most three quarters of the screen's height (at 2:3) */
+        --intro-photo-width: min(40rem, 30vw, 50vh);
+        /* The wrapper's content width (the screen less its 8rem side
+           padding, at most 100rem) less the photo and the gap */
+        --intro-text-width: calc(
+            min(100vw - 16rem, 100rem) - var(--intro-photo-width) - 6rem
+        );
+        column-gap: 6rem;
+    }
+
+    .intro-photo {
+        width: var(--intro-photo-width);
+    }
+
+    .intro-photo::before {
+        border-radius: 2rem;
+        transform: translate(1.5rem, 1.5rem);
+    }
+
+    @media (hover: hover) {
+        .intro-photo:hover::before {
+            transform: translate(1rem, 1rem);
+        }
+    }
+
+    .intro-photo-frame {
+        border-radius: 2rem;
+    }
+
+    /* The greeting is about 11 times its font size wide (11.6 leaves some
+       room); the profession about 13 */
+    .intro-layout.is-title h1 .sentence {
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        font-size: min(6rem, calc(var(--intro-text-width) / 11.6));
+    }
+
+    .intro-layout.is-title h1 .profession {
+        font-size: min(4rem, calc(var(--intro-text-width) / 13.25));
+    }
+
+    .intro-layout.is-title .intro-toggle {
+        margin-top: 3rem;
+    }
+
+    /* In line with the sizes below this width, and short enough to fit
+       the column beside the photo within the screen's height */
+    .intro-section .description {
+        font-size: 2.25rem;
+        line-height: 2.75rem;
+        margin-bottom: 3rem;
+    }
+}
+
 /* ---------- Phones and upright tablets: with the greeting, the photo fills
    the whole screen and fades out into the page towards the bottom, where
    the greeting and toggle sit ---------- */
@@ -280,7 +343,7 @@
         isolation: isolate;
         /* The screen's visible height, without the browser's toolbars (as
            measured in index.js when installed as an app) */
-        height: var(--app-height, 100svh);
+        min-height: var(--app-height, 100svh);
 
         /* Eased fades (smoothstep), starting and ending gently so no edge
            shows where they begin or end. The photo fades out first, then
@@ -484,6 +547,34 @@
     .intro-section .wrapper {
         margin: 2rem auto;
         padding-bottom: 4rem;
+    }
+}
+
+/* Phones turned sideways: everything tighter, so the description fits the
+   short screen beside the photo just as the greeting does, and switching
+   between them never makes the intro taller than the screen */
+@media (max-height: 500px) and (orientation: landscape) {
+    .intro-section .intro-layout {
+        margin: 0 auto;
+        padding-top: 1rem;
+        /* Clear of the navbar at the bottom (and the home indicator) */
+        padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .intro-section .description {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .intro-layout .intro-toggle {
+        margin-top: 0.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    .intro-layout.is-title .intro-toggle {
+        margin-top: 1rem;
     }
 }
 

@@ -19,12 +19,28 @@ export default function ProjectCarousel({ projects, isGalleryOpen, onOpen }) {
     );
     const [isPaused, setIsPaused] = useState(false);
     const [autoplay, setAutoplay] = useState(() => !prefersReducedMotion());
+    // Which way the last move went (1: forwards, -1: back) and which project
+    // it left, so the text below can leave towards one side and the new
+    // text come in from the other
+    const [direction, setDirection] = useState(1);
+    const [leaving, setLeaving] = useState(null);
 
     const count = projects.length;
+    const isAutoplaying = autoplay && !isPaused && !isGalleryOpen && count > 1;
+
+    const moveTo = (target, dir) => {
+        if (target === active) return;
+
+        setDirection(dir);
+        setLeaving(active);
+        setActive(target);
+    };
 
     const goTo = (i) => {
         setAutoplay(false);
-        setActive(((i % count) + count) % count);
+
+        const target = ((i % count) + count) % count;
+        moveTo(target, Math.sign(getOffset(target, active, count)) || 1);
     };
     const next = () => goTo(active + 1);
     const prev = () => goTo(active - 1);
@@ -32,14 +48,16 @@ export default function ProjectCarousel({ projects, isGalleryOpen, onOpen }) {
     const swipeHandlers = useSwipe(prev, next);
 
     useEffect(() => {
-        if (!autoplay || isPaused || isGalleryOpen || count < 2) return;
+        if (!isAutoplaying) return;
 
         const timeout = setTimeout(() => {
-            setActive((current) => (current + 1) % count);
+            setDirection(1);
+            setLeaving(active);
+            setActive((active + 1) % count);
         }, AUTOPLAY_MS);
 
         return () => clearTimeout(timeout);
-    }, [active, autoplay, isPaused, isGalleryOpen, count]);
+    }, [active, isAutoplaying, count]);
 
     useEffect(() => {
         projects[active].images.forEach((src) => {
@@ -65,7 +83,11 @@ export default function ProjectCarousel({ projects, isGalleryOpen, onOpen }) {
 
     return (
         <div
-            className="pc"
+            className={"pc" + (isAutoplaying ? " is-autoplaying" : "")}
+            style={{
+                "--pc-dir": direction,
+                "--pc-autoplay": `${AUTOPLAY_MS}ms`,
+            }}
             role="group"
             aria-roledescription="carousel"
             aria-label="Projects"
@@ -121,7 +143,9 @@ export default function ProjectCarousel({ projects, isGalleryOpen, onOpen }) {
                     <div
                         key={project.id}
                         className={
-                            "pc-info-item" + (i === active ? " is-active" : "")
+                            "pc-info-item" +
+                            (i === active ? " is-active" : "") +
+                            (i === leaving && i !== active ? " is-leaving" : "")
                         }
                         aria-hidden={i !== active}
                     >

@@ -52,6 +52,13 @@
     -webkit-touch-callout: none; /* iOS Safari: disable callout on long-press */
 }
 
+/* iPhones enlarge text they find small when turned sideways; the sizes
+   set in the stylesheets are meant to hold in both orientations */
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 body {
     margin: 0;
     font-family: "main-normal", -apple-system, BlinkMacSystemFont, "Segoe UI",
