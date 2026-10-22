@@ -9,7 +9,7 @@
 
     position: fixed;
     /* Above the iPhone's home indicator, where there is one */
-    bottom: calc(var(--nav-bottom) + env(safe-area-inset-bottom, 0px));
+    bottom: calc(1rem + var(--nav-bottom) + env(safe-area-inset-bottom, 0px));
     left: 50%;
     padding: var(--nav-padding);
     border-radius: var(--nav-radius);

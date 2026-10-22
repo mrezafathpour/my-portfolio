@@ -13,6 +13,10 @@ const getOffset = (i, active, count) => {
 
 const pad = (n) => String(n).padStart(2, "0");
 
+// Photos already asked for, kept for the whole visit, so going back to a
+// project does not ask for its photos again
+const preloadedImages = new Set();
+
 export default function ProjectCarousel({ projects, isGalleryOpen, onOpen }) {
     const [active, setActive] = useState(() =>
         Math.floor(Math.random() * projects.length)
@@ -59,8 +63,13 @@ export default function ProjectCarousel({ projects, isGalleryOpen, onOpen }) {
         return () => clearTimeout(timeout);
     }, [active, isAutoplaying, count]);
 
+    // Loads the active project's photos ahead, so its gallery opens at once;
+    // only the first time each project comes up, not on every visit
     useEffect(() => {
         projects[active].images.forEach((src) => {
+            if (preloadedImages.has(src)) return;
+
+            preloadedImages.add(src);
             const img = new Image();
             img.src = src;
         });

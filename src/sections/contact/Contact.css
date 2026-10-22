@@ -1,120 +1,641 @@
 /* Sizes grow with the screen, following the breakpoints in index.css
    (phones first, then ≥ 640px, ≥ 768px, ≥ 1024px and ≥ 1536px) */
 .contact-section {
-    --contact-icon-size: 1.5rem;
-    --contact-icon-gap: 1.5rem;
-    --contact-note-size: 0.75rem;
-    --contact-note-line: 1.125rem;
-    text-align: center;
-    padding: 0;
+    --contact-top-space: 4rem;
+    --contact-gap: 3rem;
+    --contact-radius: 1.5rem;
+    --contact-cta-padding: 2rem 1.5rem;
+    --contact-title-size: 1.875rem;
+    --contact-lead-size: 1rem;
+    --contact-text-size: 0.9375rem;
+    --contact-small-size: 0.8125rem;
+    --contact-logo-size: 1.5rem;
+    --contact-social-size: 2rem;
+
+    /* Light page */
+    --contact-surface: rgba(255, 255, 255, 0.55);
+    --contact-border: rgba(26, 26, 26, 0.08);
+    --contact-muted: var(--secondary-light-mode);
+    --contact-tile: #fff;
+    --contact-tile-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+    --contact-signature: color-mix(in srgb, var(--text-light-mode) 12%, transparent);
+    --contact-shine: linear-gradient(
+        90deg,
+        var(--accent),
+        var(--accent-light),
+        var(--accent)
+    );
+
+    position: relative;
+    overflow: hidden;
+    /* The signature's size follows the section's width */
+    container-type: inline-size;
+    padding-top: var(--contact-top-space);
+    /* Above the iPhone's home indicator, where there is one */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-.contact-section .wrapper {
-    margin: 4rem auto 1rem auto;
+@media (prefers-color-scheme: dark) {
+    .contact-section {
+        --contact-surface: rgba(255, 255, 255, 0.04);
+        --contact-border: rgba(255, 255, 255, 0.1);
+        --contact-muted: var(--secondary-dark-mode);
+        --contact-tile: rgba(255, 255, 255, 0.08);
+        --contact-tile-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+        --contact-signature: color-mix(in srgb, var(--text-dark-mode) 10%, transparent);
+        --contact-shine: linear-gradient(
+            90deg,
+            var(--accent-light),
+            var(--accent),
+            var(--accent-light)
+        );
+    }
 }
 
-.contact-icons {
+.contact-inner {
     display: flex;
-    justify-content: center;
-    gap: var(--contact-icon-gap);
-    margin-bottom: 1rem;
+    flex-direction: column;
+    gap: var(--contact-gap);
 }
 
-.contact-icon {
-    width: var(--contact-icon-size);
-    height: var(--contact-icon-size);
-    opacity: 0.8;
-    transition: all 0.25s ease;
+.contact-inner h2,
+.contact-inner h3,
+.contact-inner p {
+    margin: 0;
 }
 
-.contact-icon:hover {
+.contact-section a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* ---------- Reveal: the parts rise into place one after another the
+   first time the section scrolls into view ---------- */
+
+.contact-reveal {
+    opacity: 0;
+    transform: translateY(1.5rem);
+    transition:
+        opacity 0.8s ease var(--reveal-delay, 0s),
+        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+}
+
+.contact-section.is-visible .contact-reveal {
     opacity: 1;
-    transform: scale(1.14);
+    transform: none;
+}
+
+.contact-grid > :nth-child(1) {
+    --reveal-delay: 0.15s;
+}
+
+.contact-grid > :nth-child(2) {
+    --reveal-delay: 0.25s;
+}
+
+.contact-grid > :nth-child(3) {
+    --reveal-delay: 0.35s;
+}
+
+.contact-bottom {
+    --reveal-delay: 0.45s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .contact-reveal {
+        transform: none;
+        transition: opacity 0.4s ease;
+    }
+}
+
+/* ---------- Call to action: a glass card with an accent edge on top and
+   an accent glow behind its corner ---------- */
+
+.contact-cta {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: var(--contact-cta-padding);
+    border: 1px solid var(--contact-border);
+    border-radius: var(--contact-radius);
+    background: var(--contact-surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow:
+        0 30px 80px -40px color-mix(in srgb, var(--accent) 55%, transparent),
+        0 18px 40px -28px rgba(0, 0, 0, 0.45);
+}
+
+.contact-cta::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--accent),
+        var(--accent-light),
+        var(--accent),
+        transparent
+    );
+}
+
+.contact-cta::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -40%;
+    right: -20%;
+    width: 70%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+        closest-side,
+        color-mix(in srgb, var(--accent) 22%, transparent),
+        transparent
+    );
+    pointer-events: none;
+}
+
+.contact-cta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.contact-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: "main-bold";
+    font-size: var(--contact-small-size);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     color: var(--accent-text);
 }
 
-.contact-icon svg {
-    width: 100%;
-    height: 100%;
+.contact-eyebrow::before {
+    content: "";
+    width: 2rem;
+    height: 1px;
+    background: currentColor;
 }
 
-.footer-note {
-    margin-top: 1.25rem;
-    padding: 0 1rem;
-    font-size: var(--contact-note-size);
-    line-height: var(--contact-note-line);
-    letter-spacing: 0.05em;
-    opacity: 0.85;
+.contact-title {
+    font-family: "main-bold";
+    font-size: var(--contact-title-size);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+}
+
+/* The same moving accent sheen as the navbar's active link */
+.contact-shine {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: var(--contact-shine);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: contactShine 5s linear infinite reverse;
+}
+
+@keyframes contactShine {
+    to {
+        background-position: 150% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .contact-shine {
+        animation: none;
+    }
+}
+
+.contact-lead {
+    max-width: 34rem;
+    font-size: var(--contact-lead-size);
+    line-height: 1.6;
+    color: var(--contact-muted);
+}
+
+.contact-cta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.contact-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-family: "main-bold";
+    font-size: var(--contact-text-size);
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background-color 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.contact-button svg {
+    flex: none;
+    font-size: 1.125em;
+    transition: transform 0.25s ease;
+}
+
+.contact-button:focus-visible,
+.contact-link:focus-visible,
+.contact-top:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+}
+
+/* Dark text: it reads far better on the bright accent than white */
+.contact-section .contact-button-primary {
+    border: none;
+    color: #1a1a1a;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent));
+    box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.contact-button-ghost {
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    color: var(--accent-text);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.contact-button-ghost.is-copied {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.contact-email {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (hover: hover) {
+    .contact-button:hover {
+        transform: translateY(-2px);
+    }
+
+    .contact-button-primary:hover {
+        box-shadow: 0 14px 36px -10px color-mix(in srgb, var(--accent) 85%, transparent);
+    }
+
+    .contact-button-primary:hover svg {
+        transform: translate(2px, -2px);
+    }
+
+    .contact-button-ghost:hover {
+        border-color: var(--accent);
+    }
+}
+
+.contact-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* ---------- Brand, sections and links ---------- */
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1.5rem;
+}
+
+.contact-brand {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.contact-logo {
+    align-self: flex-start;
+    font-family: "main-bold";
+    font-size: var(--contact-logo-size);
+    letter-spacing: 0.04em;
+    color: var(--accent-text);
+    text-shadow: 0 0 1.25rem color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.contact-brand-text {
+    max-width: 22rem;
+    font-size: var(--contact-text-size);
+    line-height: 1.6;
+    color: var(--contact-muted);
+}
+
+.contact-column .contact-heading {
+    margin-bottom: 1.25rem;
+    font-family: "main-bold";
+    font-size: var(--contact-small-size);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--contact-muted);
+}
+
+.contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.contact-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: var(--contact-text-size);
+    border-radius: 6px;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.25s ease;
+}
+
+/* An accent underline that grows in from the left on hover */
+.contact-sections .contact-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.25rem;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.contact-social-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: var(--contact-social-size);
+    height: var(--contact-social-size);
+    border-radius: 10px;
+    font-size: calc(var(--contact-social-size) * 0.5);
+    background: var(--contact-tile);
+    box-shadow: var(--contact-tile-shadow);
+    transition:
+        transform 0.25s ease,
+        color 0.25s ease;
+}
+
+.contact-social-arrow {
+    opacity: 0;
+    transform: translate(-4px, 4px);
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+@media (hover: hover) {
+    .contact-link:hover {
+        color: var(--accent-text);
+    }
+
+    .contact-sections .contact-link:hover::after {
+        transform: scaleX(1);
+    }
+
+    .contact-social:hover .contact-social-arrow {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ---------- Copyright ---------- */
+
+.contact-bottom {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1.75rem;
+    text-align: center;
+    font-size: var(--contact-small-size);
+    color: var(--contact-muted);
+}
+
+.contact-bottom::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--contact-border) 15%,
+        color-mix(in srgb, var(--accent) 50%, transparent) 50%,
+        var(--contact-border) 85%,
+        transparent
+    );
+}
+
+.contact-copyright {
+    line-height: 1.6;
+}
+
+.contact-copyright strong {
+    font-family: "main-bold";
+    color: var(--accent-text);
+}
+
+.contact-version {
+    padding: 0.25rem 0.625rem;
+    border: 1px solid var(--contact-border);
+    border-radius: 999px;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+        monospace;
+    font-size: 0.75rem;
+    background: var(--contact-surface);
+}
+
+/* Back to top: a button that looks like the section links above it */
+.contact-top {
+    gap: 0.5rem;
+    padding: 0;
+    border: none;
+    font-family: inherit;
+    color: inherit;
+    background: none;
+    cursor: pointer;
+}
+
+.contact-top svg {
+    transition: transform 0.25s ease;
+}
+
+@media (hover: hover) {
+    .contact-top:hover svg {
+        transform: translateY(-3px);
+    }
+}
+
+/* ---------- Signature: the name across the whole width, faded into the
+   page and cut off by the bottom edge ---------- */
+
+.contact-signature {
+    margin-top: 2rem;
+    /* About as wide as the section: the name is ~7.3 times its font size */
+    font-size: 13.5vw;
+    font-size: 13.5cqw;
+    font-family: "main-bold";
+    line-height: 0.8;
+    letter-spacing: -0.03em;
+    text-align: center;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(
+        to bottom,
+        var(--contact-signature),
+        transparent 85%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    transform: translateY(12%);
+    pointer-events: none;
 }
 
 /* Small (sm) ≥ 640px */
 @media (min-width: 640px) {
     .contact-section {
-        --contact-icon-size: 1.625rem;
-        --contact-icon-gap: 1.75rem;
-        --contact-note-size: 0.875rem;
-        --contact-note-line: 1.25rem;
+        --contact-gap: 3.5rem;
+        --contact-cta-padding: 2.5rem 2.25rem;
+        --contact-title-size: 2.375rem;
+        --contact-lead-size: 1.0625rem;
+        --contact-logo-size: 1.625rem;
+    }
+
+    .contact-cta-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .contact-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
     }
 }
 
 /* Medium (md) ≥ 768px */
 @media (min-width: 768px) {
     .contact-section {
-        --contact-icon-size: 1.75rem;
-        --contact-icon-gap: 2rem;
-        --contact-note-size: 1rem;
-        --contact-note-line: 1.5rem;
+        --contact-top-space: 5rem;
+        --contact-gap: 4rem;
+        --contact-radius: 1.75rem;
+        --contact-cta-padding: 3rem;
+        --contact-title-size: 2.75rem;
+        --contact-text-size: 1rem;
+        --contact-small-size: 0.875rem;
+        --contact-social-size: 2.125rem;
     }
 
-    .contact-section .wrapper {
-        margin-top: 5rem;
+    .contact-grid {
+        grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr));
+        gap: 2rem;
+    }
+
+    .contact-brand {
+        grid-column: auto;
     }
 }
 
 /* Large (lg) ≥ 1024px */
 @media (min-width: 1024px) {
     .contact-section {
-        --contact-icon-size: 2rem;
-        --contact-icon-gap: 2.25rem;
-        --contact-note-size: 1.125rem;
-        --contact-note-line: 1.625rem;
+        --contact-gap: 4.5rem;
+        --contact-radius: 2rem;
+        --contact-cta-padding: 3.5rem 4rem;
+        --contact-title-size: 3.25rem;
+        --contact-lead-size: 1.125rem;
+        --contact-logo-size: 1.875rem;
     }
 
-    .footer-note {
-        margin-top: 1.5rem;
+    /* Text on the left, the buttons stacked on the right */
+    .contact-cta {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 4rem;
+    }
+
+    .contact-cta-text {
+        max-width: 44rem;
+    }
+
+    .contact-cta-actions {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        flex: none;
     }
 }
 
 /* 2 Extra Large (xl) ≥ 1536px */
 @media (min-width: 1536px) {
     .contact-section {
-        --contact-icon-size: 2.25rem;
-        --contact-icon-gap: 2.75rem;
-        --contact-note-size: 1.25rem;
-        --contact-note-line: 1.875rem;
+        --contact-top-space: 6rem;
+        --contact-gap: 5rem;
+        --contact-cta-padding: 4.5rem 5rem;
+        --contact-title-size: 4rem;
+        --contact-lead-size: 1.25rem;
+        --contact-text-size: 1.125rem;
+        --contact-small-size: 1rem;
+        --contact-logo-size: 2.25rem;
+        --contact-social-size: 2.5rem;
     }
 
-    .footer-note {
-        margin-top: 2rem;
+    .contact-cta-text {
+        max-width: 52rem;
+    }
+
+    .contact-brand-text {
+        max-width: 26rem;
     }
 }
 
-/* Phones turned sideways are as wide as a tablet, but the copyright line
-   should stay as small as it is upright, and the icons a comfortable size
-   to tap */
+/* Phones turned sideways are as wide as a tablet, but the text should stay
+   about as small as it is upright, and the card less tall */
 @media (max-height: 640px) and (orientation: landscape) {
     .contact-section {
-        --contact-icon-size: 2rem;
-        --contact-icon-gap: 2.25rem;
-        --contact-note-size: 0.5rem;
-        --contact-note-line: 1.125rem;
-    }
-
-    .contact-section .wrapper {
-        margin-top: 3rem;
-    }
-
-    .footer-note {
-        margin-top: 1rem;
+        --contact-top-space: 3rem;
+        --contact-gap: 3rem;
+        --contact-cta-padding: 2rem 2.5rem;
+        --contact-title-size: 2rem;
+        --contact-lead-size: 1rem;
+        --contact-text-size: 0.9375rem;
+        --contact-small-size: 0.8125rem;
+        --contact-logo-size: 1.5rem;
+        --contact-social-size: 2rem;
     }
 }
