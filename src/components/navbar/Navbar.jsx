@@ -1,71 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import useSmoothScroll, { SCROLL_DURATION } from "../../hooks/useSmoothScroll";
 import "./Navbar.css";
 
-const navLinks = ["Intro", "Projects", "Skills", "Journey"];
+const navLinks = ["Projects", "Skills", "Journey", "Contact"];
+
+// The navbar hides while this section is on screen
+const HIDDEN_IN_SECTION = "Contact";
 
 // The fonts the links are measured with; the navbar waits until the browser
 // has finished loading them, so it does not resize right after appearing
 const NAV_FONTS = ['1rem "main-normal"', 'bold 1rem "main-bold"'];
 
-// Starts slowly, speeds up, then settles gently on the section
-const easeInOutCubic = (t) =>
-    t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
-
-// Any of these from the user takes over from a scroll still under way
-const USER_SCROLL_EVENTS = ["wheel", "touchstart", "keydown"];
-
 // scrollDuration: how long (ms) the scroll to a section takes when a link is
-// clicked, whatever the distance; raise it to slow the scroll down
-export default function Navbar({ scrollDuration = 1000 }) {
+// clicked, whatever the distance; the default is shared with the Contact
+// section's links, so every in-page scroll moves at the same pace
+export default function Navbar({ scrollDuration = SCROLL_DURATION }) {
     const [hidden, setHidden] = useState(false);
     const [activeSection, setActiveSection] = useState("Intro");
     const [fontsReady, setFontsReady] = useState(false);
-
-    // Stops the scroll currently running, if any
-    const stopScrollRef = useRef(null);
-
-    useEffect(() => () => stopScrollRef.current?.(), []);
-
-    const scrollToY = (targetY) => {
-        stopScrollRef.current?.();
-
-        const startY = window.scrollY;
-        const distance = targetY - startY;
-
-        const prefersReduced = window.matchMedia?.(
-            "(prefers-reduced-motion: reduce)"
-        ).matches;
-
-        if (prefersReduced || scrollDuration <= 0 || distance === 0) {
-            window.scrollTo(0, targetY);
-            return;
-        }
-
-        const startTime = performance.now();
-        let raf = 0;
-
-        const stop = () => {
-            cancelAnimationFrame(raf);
-            USER_SCROLL_EVENTS.forEach((type) =>
-                window.removeEventListener(type, stop)
-            );
-            stopScrollRef.current = null;
-        };
-
-        const step = (now) => {
-            const progress = Math.min((now - startTime) / scrollDuration, 1);
-            window.scrollTo(0, startY + distance * easeInOutCubic(progress));
-
-            if (progress < 1) raf = requestAnimationFrame(step);
-            else stop();
-        };
-
-        USER_SCROLL_EVENTS.forEach((type) =>
-            window.addEventListener(type, stop, { passive: true })
-        );
-        stopScrollRef.current = stop;
-        raf = requestAnimationFrame(step);
-    };
+    const { scrollToSection } = useSmoothScroll(scrollDuration);
 
     useEffect(() => {
         if (!document.fonts?.load) {
@@ -100,11 +53,25 @@ export default function Navbar({ scrollDuration = 1000 }) {
 
             const isAtBottom = maxScroll - current <= 2;
 
-            setHidden(isAtBottom);
+            // The Contact section has its own links to every section, so the
+            // navbar steps aside once that section reaches the middle of the
+            // screen (where the scroll spy counts it as the current one)
+            const contact = document.getElementById(HIDDEN_IN_SECTION);
+            const isInContact =
+                !!contact &&
+                contact.getBoundingClientRect().top <= viewportHeight / 2;
+
+            setHidden(isAtBottom || isInContact);
         };
 
         window.addEventListener("scroll", handleScroll, { passive: true });
-        return () => window.removeEventListener("scroll", handleScroll);
+        window.addEventListener("resize", handleScroll);
+        handleScroll();
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener("resize", handleScroll);
+        };
     }, []);
 
     // Highlight the section that sits under the middle of the screen
@@ -135,11 +102,7 @@ export default function Navbar({ scrollDuration = 1000 }) {
 
     const handleLinkClick = (e, label) => {
         e.preventDefault();
-
-        const target = document.querySelector(`#${label}`);
-        if (target) {
-            scrollToY(target.getBoundingClientRect().top + window.scrollY);
-        }
+        scrollToSection(label);
     };
 
     if (!fontsReady) return null;

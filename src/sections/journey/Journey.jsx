@@ -4,23 +4,20 @@ import { GlyphPlasmaBackground } from "../../components/GlyphPlasmaBackground";
 import "./Journey.css";
 
 export default function Journey() {
+    // Reveals the end of the timeline once it scrolls into view, then stops
+    // watching instead of measuring it on every scroll
     useEffect(() => {
         const endBlock = document.getElementById("timeline-end");
 
-        function onScroll() {
-            const rect = endBlock.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
+        const observer = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) return;
 
-            if (rect.top < windowHeight - 1) {
-                endBlock.classList.add("visible");
-            }
-        }
+            endBlock.classList.add("visible");
+            observer.disconnect();
+        });
 
-        window.addEventListener("scroll", onScroll);
-
-        onScroll();
-
-        return () => window.removeEventListener("scroll", onScroll);
+        observer.observe(endBlock);
+        return () => observer.disconnect();
     }, []);
 
     return (

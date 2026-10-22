@@ -99,21 +99,15 @@
     top: 4px;
 }
 
+/* Only the scale is animated: the glow grows with the dot, and the browser
+   can run it without repainting the shadow on every frame */
 @keyframes pulseDot {
-    0% {
+    0%,
+    100% {
         transform: scale(1);
-        box-shadow: 0 0 6px
-            color-mix(in srgb, var(--accent) 60%, transparent);
     }
     50% {
         transform: scale(1.3);
-        box-shadow: 0 0 14px
-            color-mix(in srgb, var(--accent) 90%, transparent);
-    }
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 6px
-            color-mix(in srgb, var(--accent) 60%, transparent);
     }
 }
 
